@@ -1,0 +1,24 @@
+{
+  "name": "node-first-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js",
+    "start-server": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BrianCodeNha/NODEJS_LAB_ASM.git"
+  },
+  "author": "minh chi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BrianCodeNha/NODEJS_LAB_ASM/issues"
+  },
+  "homepage": "https://github.com/BrianCodeNha/NODEJS_LAB_ASM#readme",
+  "dependencies": {
+    "nodemon": "^1.18.3"
+  }
+}
