@@ -2,14 +2,27 @@
 
 const http = require("http");
 
-const fs = require('fs')
+// SETUP expressjs
 
-const routes = require('./routes')
+const express = require('express')
 
-console.log(routes.someText)
+const app = express();
+
+// create middleware
+
+app.use((req, res, next) => {
+    console.log('this is a middleware');    
+    next();
+})
+
+app.use((req, res, next) => {
+    console.log('this is the second middleware');
+    res.send('<h1>Hello from Express.js</h1>')
+})
+
 
 // creater server from http, có tham số là một function (resquest, response)
 
-const server = http.createServer(routes.handler);
+const server = http.createServer(app);
 
 server.listen(3000)
