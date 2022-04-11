@@ -27,6 +27,7 @@ const handlerFetch = (req, res) => {
       }); //sync là dạng đồng bộ dẫn đến code block, do đó không dùng mà chuyển sang dạng bất động bộ có nghĩa là nodejs yêu cầu sever làm gì đó và để đó, sau đó thực hiện các request khác cuối cùng thì nó mới quay lại thực hiện, chứ không phải đi tuần tự
     });
   }  
+  
 
   res.setHeader("Content-Type", "text/html"); // không dùng header vẫn load ra được trang html!!!!!
   res.write("<html>");
@@ -34,6 +35,7 @@ const handlerFetch = (req, res) => {
   res.write("<body><h1>Hello from my Node.js Server</h1></body>");
   res.write("</html>");
   res.end();
+  
 };
 
 // module.exports = handlerFetch;
