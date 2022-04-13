@@ -12,8 +12,8 @@ const bodyParser = require('body-Parser');
 
 app.use(bodyParser.urlencoded({extends: false}))
 
-app.use(adminRouter);
-app.use(shopRouter)
+app.use('/admin',adminRouter);
+app.use('/shop',shopRouter)
 
 app.use((req, res, next) => {
     res.status(404).send('<h1>Page not found</h1>')
