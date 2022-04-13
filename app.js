@@ -1,5 +1,7 @@
 // SETUP expressjs
 
+const path = require('path');
+
 const express = require('express')
 
 const adminRouter = require('./routes/admin')
@@ -13,10 +15,10 @@ const bodyParser = require('body-Parser');
 app.use(bodyParser.urlencoded({extends: false}))
 
 app.use('/admin',adminRouter);
-app.use('/shop',shopRouter)
+app.use(shopRouter)
 
 app.use((req, res, next) => {
-    res.status(404).send('<h1>Page not found</h1>')
+    res.status(404).sendFile(path.join(__dirname, 'views', '404.html'))
 })
 
 // creater server from http, có tham số là một function (resquest, response)
