@@ -9,7 +9,7 @@ const router = express.Router();
 // Method GET, url /admin/add-product
 
 router.get('/add-product',(req, res, next) => {
-    res.render('add-product', {pageTitle: 'Add Product Choi'})
+    res.render('add-product', {pageTitle: 'Add Product Choi', path: '/admin/add-product'})
 })
 
 // method POST, URL /admin/product

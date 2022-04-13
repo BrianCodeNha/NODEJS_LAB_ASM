@@ -25,7 +25,7 @@ app.use('/admin',adminData.routes);
 app.use(shopRouter)
 
 app.use((req, res, next) => {
-    res.status(404).render('404')
+    res.status(404).render('404', {pageTitle: 'Page not found', path: '/'})
 })
 
 // creater server from http, có tham số là một function (resquest, response)
