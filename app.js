@@ -2,27 +2,19 @@
 
 const express = require('express')
 
+const adminRouter = require('./routes/admin')
+
+const shopRouter = require('./routes/shop')
+
 const app = express();
 const bodyParser = require('body-Parser');
 // create middleware 
 
 app.use(bodyParser.urlencoded({extends: false}))
 
-app.use('/add-products',(req, res, next) => {
-    res.send('<form action="/product" method="POST"><input type="text" name="title" /><button type="submit">Send</button></form>')
-})
+app.use(adminRouter);
 
-app.use('/product', (req, res, next) => {
-
-    console.log('product title', req.body)
-    res.redirect('/')
-})
-
-
-app.use('/',(req, res, next) => {
-    console.log('this is the second middleware'); 
-    res.send('<h1>Hello from Express.js</h1>')
-})
+app.use(shopRouter)
 
 
 
