@@ -15,9 +15,11 @@ router.get('/add-product',(req, res, next) => {
 
 // method POST, URL /admin/product
 
-router.post('/product', (req, res, next) => {
+const productData = [];
 
-    console.log('product title', req.body)
+router.post('/product', (req, res, next) => {
+    productData.push(req.body.title)
+    console.log('product data', productData)
     res.redirect('/')
 })
 
