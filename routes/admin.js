@@ -2,7 +2,6 @@ const rootDir  = require('../ulti/path')
 
 const path = require('path')
 
-const { Router } = require('express');
 const express  = require('express');
 
 const router = express.Router();
@@ -15,12 +14,13 @@ router.get('/add-product',(req, res, next) => {
 
 // method POST, URL /admin/product
 
-const productData = [];
+const products = [];
 
 router.post('/product', (req, res, next) => {
-    productData.push(req.body.title)
-    console.log('product data', productData)
+    products.push({title: req.body.title})
+    console.log('product data', products)
     res.redirect('/')
 })
 
-module.exports = router;
+exports.routes = router;
+exports.products = products;

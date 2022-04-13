@@ -4,18 +4,24 @@ const path = require('path');
 
 const express = require('express')
 
-const adminRouter = require('./routes/admin')
+const adminData = require('./routes/admin')
 
 const shopRouter = require('./routes/shop')
 
 const app = express();
 const bodyParser = require('body-Parser');
+
+// add the way to show data on views
+
+app.set('view engine', 'pug') // da cai dat pug trong dependencies
+app.set('views', 'views') // tìm viewTemplate trong folder views
+
 // create middleware 
 
 app.use(bodyParser.urlencoded({extends: false}))
 app.use(express.static(path.join(__dirname, 'public')))
 
-app.use('/admin',adminRouter);
+app.use('/admin',adminData.routes);
 app.use(shopRouter)
 
 app.use((req, res, next) => {
