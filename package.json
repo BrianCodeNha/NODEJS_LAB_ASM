@@ -20,7 +20,7 @@
   "homepage": "https://github.com/BrianCodeNha/NODEJS_LAB_ASM#readme",
   "dependencies": {
     "express": "^4.17.3",
-    "express-handlebars": "^6.0.5",
+    "express-handlebars": "3.0",
     "nodemon": "^1.18.3",
     "pug": "^3.0.2"
   }
