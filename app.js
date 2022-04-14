@@ -3,6 +3,7 @@
 const path = require('path');
 
 const express = require('express')
+const expressHbs = require('express-handlebars');
 
 const adminData = require('./routes/admin')
 
@@ -13,7 +14,8 @@ const bodyParser = require('body-Parser');
 
 // add the way to show data on views
 
-app.set('view engine', 'pug') // da cai dat pug trong dependencies
+app.engine('hbs', expressHbs())
+app.set('view engine', 'hbs') // da cai dat pug trong dependencies
 app.set('views', 'views') // tìm viewTemplate trong folder views
 
 // create middleware 
