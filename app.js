@@ -14,8 +14,8 @@ const bodyParser = require('body-Parser');
 
 // add the way to show data on views
 
-app.engine('hbs', expressHbs())
-app.set('view engine', 'hbs') // da cai dat pug trong dependencies
+
+app.set('view engine', 'ejs') // da cai dat pug trong dependencies
 app.set('views', 'views') // tìm viewTemplate trong folder views
 
 // create middleware 
