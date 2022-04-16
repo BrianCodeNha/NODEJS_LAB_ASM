@@ -10,6 +10,13 @@ exports.getProducts = (req, res, next) => {
   });
 };
 
+exports.getProduct = (req, res, next) => {
+  const productId = req.params.id;
+  console.log("🚀 ~ file: shop.js ~ line 15 ~ productId", productId)
+  res.redirect('/')
+  
+}
+
 exports.getIndex = (req, res, next) => {
   Product.fetchAll(products => {
     res.render('shop/index', {
