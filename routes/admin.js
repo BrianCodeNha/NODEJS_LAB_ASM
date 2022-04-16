@@ -1,19 +1,18 @@
-const rootDir  = require('../ulti/path')
+const path = require('path');
 
-const path = require('path')
-const productsControllers = require('../controllers/products')
+const express = require('express');
 
-const express  = require('express');
+const adminController = require('../controllers/admin');
 
-// router dung tương tự expressjs
 const router = express.Router();
 
-// Method GET, url /admin/add-product
+// /admin/add-product => GET
+router.get('/add-product', adminController.getAddProduct);
 
-router.get('/add-product', productsControllers.getAddProductPage)
+// /admin/products => GET
+router.get('/products', adminController.getProducts);
 
-// method POST, URL /admin/product
-
-router.post('/product', productsControllers.postProduct)
+// /admin/add-product => POST
+router.post('/add-product', adminController.postAddProduct);
 
 module.exports = router;

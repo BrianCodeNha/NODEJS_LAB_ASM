@@ -1,36 +1,24 @@
-// SETUP expressjs
-
 const path = require('path');
-const express = require('express')
 
-// setup các đường dẫn phụ 
-const adminRoute = require('./routes/admin')
-const shopRouter = require('./routes/shop')
+const express = require('express');
+const bodyParser = require('body-parser');
 
-// setup object biên dịch data từ body của request/response
+const errorController = require('./controllers/error');
 
-const bodyParser = require('body-Parser');
+const app = express();
 
-const errorController = require('./controllers/errors')
+app.set('view engine', 'ejs');
+app.set('views', 'views');
 
-// add the way to show data on views
-const app = express(); //cài đặt app dưới dạng express function
+const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
 
-app.set('view engine', 'ejs') // da cai dat pug/ejs trong dependencies - cài đặt định dạng cho content động
-app.set('views', 'views') // tìm viewTemplate trong folder views
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/admin', adminRoutes);
+app.use(shopRoutes);
 
+app.use(errorController.get404);
 
-// create middleware 
-
-app.use(bodyParser.urlencoded({extends: false})) // look at the request where header: 'Content-Type': urlencoded, extends: false không cho phép loại data khác trừ string
-app.use(express.static(path.join(__dirname, 'public'))) // cho phép browser load trực tiếp file từ folder public
-
-app.use('/admin',adminRoute);
-app.use(shopRouter)
-
-app.use(errorController.get404)
-
-// creater server from http, có tham số là một function (resquest, response)
-
-app.listen(3000)
+app.listen(3000);
