@@ -13,6 +13,9 @@ exports.getProducts = (req, res, next) => {
 exports.getProduct = (req, res, next) => {
   const productId = req.params.id;
   console.log("🚀 ~ file: shop.js ~ line 15 ~ productId", productId)
+  Product.findProductById(productId, product => {
+  console.log("🚀 ~ file: shop.js ~ line 17 ~ product", product)    
+  });
   res.redirect('/')
   
 }
