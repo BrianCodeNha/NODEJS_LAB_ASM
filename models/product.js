@@ -12,7 +12,10 @@ module.exports = class Product {
   }
 
   save() {
-    
+    return db.execute( // nếu không return sẽ bị lỗi TypeError: Cannot read properties of undefined (reading 'then')
+      'INSERT INTO products (title, price, description, imageUrl) VALUES (?, ?, ?, ?)',
+      [this.title, this.price, this.description, this.imageUrl]
+      )
   }
 
   static deleteById(id) {
