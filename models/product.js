@@ -10,7 +10,7 @@ const Product = sequelize.define("product", {
     primaryKey: true,
   },
   title: {
-    type: Sequelize.String,
+    type: Sequelize.STRING,
     allowNull: false,
   },
   price: {
@@ -18,7 +18,7 @@ const Product = sequelize.define("product", {
     allowNull: false,
   },
   imageUrl: {
-    type: Sequelize.String,
+    type: Sequelize.STRING,
     allowNull: false,
   }
 
