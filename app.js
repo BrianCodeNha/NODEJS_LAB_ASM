@@ -42,7 +42,7 @@ Product.belongsToMany(Cart, { through: CartItem });
 
 sequelize
   .sync()
-  //   .sync({ force: true }) // ghi de len du lieu bảng cũ, sau khi app hoàn thiện thì xoá đi, để không bị ghi đè lên nữa
+//   .sync({ force: true }) // ghi de len du lieu bảng cũ, sau khi app hoàn thiện thì xoá đi, để không bị ghi đè lên nữa
   .then((result) => {
     return User.findById(1);
   })
