@@ -32,7 +32,7 @@ app.use(shopRoutes);
 app.use(errorController.get404);
 
 Product.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
-// User.hasMany(Product) the same to belong to
+User.hasMany(Product) // phải có relation này mới thêm được function createProduct và getProducts
 
 sequelize
   .sync({ force: true }) // ghi de len du lieu bảng cũ, sau khi app hoàn thiện thì xoá đi, để không bị ghi đè lên nữa
