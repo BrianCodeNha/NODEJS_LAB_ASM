@@ -7,6 +7,8 @@ const errorController = require("./controllers/error");
 const sequelize = require("./util/database");
 const Product = require("./models/product");
 const User = require("./models/user");
+const Cart = require("./models/cart");
+const CartItem = require("./models/cartItem");
 
 const app = express();
 
@@ -33,8 +35,13 @@ app.use(errorController.get404);
 
 Product.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
 User.hasMany(Product) // phải có relation này mới thêm được function createProduct và getProducts
+User.hasOne(Cart)
+Cart.belongsTo(User)
+Cart.belongsToMany(Product, {through: CartItem})
+Product.belongsToMany(Cart, {through: CartItem})
 
 sequelize
+// .sync()
   .sync({ force: true }) // ghi de len du lieu bảng cũ, sau khi app hoàn thiện thì xoá đi, để không bị ghi đè lên nữa
   .then((result) => {
     return User.findById(1);
