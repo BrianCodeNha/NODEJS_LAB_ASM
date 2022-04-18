@@ -1,18 +1,29 @@
 const mongodb = require("mongodb");
 const MongoClient = mongodb.MongoClient;
 
+let _db; // _ là dấu hiệu cho thấy chỉ dùng trong nội bộ file này không exports ra file khác
+
 const mongoConnect = (callback) => {
   MongoClient.connect(
-    "mongodb+srv://BrianNguyen:097359@cluster0.c8rh7.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+    "mongodb+srv://BrianNguyen:097359@cluster0.c8rh7.mongodb.net/shop?retryWrites=true&w=majority"
   )
     .then((client) => {
       console.log("connected");
-      callback(client);
+      _db = client.db()
+      callback();
     })
     .catch((error) => {
       console.log(error);
+      throw error
     });
 };
 
+const getDb = () => {
+  if (_db){
+    return _db;
+  }
+  throw 'No database found'
+}
 
-module.exports = mongoConnect;
+exports.mongoConnect = mongoConnect;
+exports.getDb = getDb;
