@@ -13,12 +13,20 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
-  Product.create({
-    title: title,
-    imageUrl: imageUrl,
-    price: price,
-    description: description,
-  })
+  req.user
+    .createProduct({ // sequelize tự động thêm vào sau khi đã có relation association
+      title: title,
+      imageUrl: imageUrl,
+      price: price,
+      description: description,
+    })
+    // Product.create({
+    //   title: title,
+    //   imageUrl: imageUrl,
+    //   price: price,
+    //   description: description,
+    //   userId: req.user.id
+    // })
     .then((result) => {
       console.log("created result");
       res.redirect("/admin/products");
@@ -63,7 +71,7 @@ exports.postEditProduct = (req, res, next) => {
       product.imageUrl = updatedImageUrl;
       return product.save();
     })
-    .then((product) => {      
+    .then((product) => {
       res.redirect("/admin/products");
     })
     .catch((error) => {
@@ -88,10 +96,11 @@ exports.getProducts = (req, res, next) => {
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
   Product.findById(prodId)
-    .then(product => {
+    .then((product) => {
       return product.destroy();
-    }).then(result => {
-      console.log('deleted')
+    })
+    .then((result) => {
+      console.log("deleted");
       res.redirect("/admin/products");
     })
     .catch((err) => {
