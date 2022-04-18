@@ -1,7 +1,7 @@
 const mongodb = require("mongodb");
 const MongoClient = mongodb.MongoClient;
 
-let _db; // _ là dấu hiệu cho thấy chỉ dùng trong nội bộ file này không exports ra file khác
+let _db; // _ là dấu hiệu cho thấy chỉ dùng trong nội bộ file này không exports ra file khác ~ private keyword
 
 const mongoConnect = (callback) => {
   MongoClient.connect(
