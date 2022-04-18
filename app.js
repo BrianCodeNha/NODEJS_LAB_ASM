@@ -22,11 +22,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use((req, res, next) => {
-    User.findById(1).then((user) => {
-        req.user = user; // store sequelize object in request and can get all method of sequelize object like destroy
-        next(); // we will get the user in req whenever start the app.
-    })
-})
+  User.findById(1).then((user) => {
+    req.user = user; // store sequelize object in request and can get all method of sequelize object like destroy
+    next(); // we will get the user in req whenever start the app.
+  });
+});
 
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
@@ -34,15 +34,15 @@ app.use(shopRoutes);
 app.use(errorController.get404);
 
 Product.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
-User.hasMany(Product) // phải có relation này mới thêm được function createProduct và getProducts
-User.hasOne(Cart)
-Cart.belongsTo(User)
-Cart.belongsToMany(Product, {through: CartItem})
-Product.belongsToMany(Cart, {through: CartItem})
+User.hasMany(Product); // phải có relation này mới thêm được function createProduct và getProducts
+User.hasOne(Cart);
+Cart.belongsTo(User);
+Cart.belongsToMany(Product, { through: CartItem });
+Product.belongsToMany(Cart, { through: CartItem });
 
 sequelize
-// .sync()
-  .sync({ force: true }) // ghi de len du lieu bảng cũ, sau khi app hoàn thiện thì xoá đi, để không bị ghi đè lên nữa
+  .sync()
+  //   .sync({ force: true }) // ghi de len du lieu bảng cũ, sau khi app hoàn thiện thì xoá đi, để không bị ghi đè lên nữa
   .then((result) => {
     return User.findById(1);
   })
@@ -53,8 +53,11 @@ sequelize
     return user;
   })
   .then((user) => {
-    console.log(user);
-    app.listen(3000);
+    return user.createCart();    
+  })
+  .then(cart => {
+      console.log(cart);
+      app.listen(3000);
   })
   .catch((err) => {
     console.log(err);
