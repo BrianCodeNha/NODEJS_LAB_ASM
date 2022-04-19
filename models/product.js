@@ -1,12 +1,13 @@
 const getDb = require("../util/database").getDb;
 const mongodb = require("mongodb")
 class Product {
-  constructor(title, description, price, imageUrl, _id) {
+  constructor(title, description, price, imageUrl, _id, userId) {
     this.title = title;
     this.description = description;
     this.price = price;
     this.imageUrl = imageUrl;
-    this._id = _id ? new mongodb.ObjectId(_id) : null;
+    this._id = _id ? new mongodb.ObjectId(_id) : null; // khi them mongodb .ObjectId() giá trị this id luôn tồn tại, do đó phải thêm logic vào, vô cùng cẩn thận.
+    this.userId = userId;
   }
 
   save() {
