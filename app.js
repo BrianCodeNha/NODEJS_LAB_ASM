@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use((req, res, next) => {
-  User.findById("625ee9394c7a19f916eb33cf")
+  User.findById('625eeb7048a3e1dab4132ccf')
     .then((user) => {
       req.user = user;
       next(); // chỉ để next ở đây, để bên dưới sẽ bị lỗi undefined user
@@ -43,7 +43,7 @@ mongoose
           name: 'admin',
           email: 'admin@test.com',
           cart: {
-            item: []
+            items: []
           }
         })
         user.save();

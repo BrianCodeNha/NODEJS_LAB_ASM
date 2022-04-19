@@ -13,9 +13,16 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
-  const product = new Product({title: title, description: description, price: price, imageUrl: imageUrl});
-  
-  product.save()
+  const product = new Product({
+    title: title,
+    description: description,
+    price: price,
+    imageUrl: imageUrl,
+    userId: req.user._id
+  });
+
+  product
+    .save()
     .then((result) => {
       // console.log('res', result);
       console.log("Created Product");
@@ -32,8 +39,8 @@ exports.getEditProduct = (req, res, next) => {
     return res.redirect("/");
   }
   const prodId = req.params.productId;
-    Product.findById(prodId)
-    .then((product) => {      
+  Product.findById(prodId)
+    .then((product) => {
       if (!product) {
         return res.redirect("/");
       }
@@ -53,24 +60,25 @@ exports.postEditProduct = (req, res, next) => {
   const updatedPrice = req.body.price;
   const updatedImageUrl = req.body.imageUrl;
   const updatedDesc = req.body.description;
-  
-  Product.findById(prodId).then((product) => {
-    product.description = updatedDesc,
-    product.price = updatedPrice,
-    product.imageUrl = updatedImageUrl,
-    product.title = updatedTitle
 
-    return product.save()
+  Product.findById(prodId)
+    .then((product) => {
+      (product.description = updatedDesc),
+        (product.price = updatedPrice),
+        (product.imageUrl = updatedImageUrl),
+        (product.title = updatedTitle);
 
-  }).then(result => {
-      console.log('UPDATED PRODUCT!');
-      res.redirect('/admin/products');
+      return product.save();
     })
-    .catch(err => console.log(err));
+    .then((result) => {
+      console.log("UPDATED PRODUCT!");
+      res.redirect("/admin/products");
+    })
+    .catch((err) => console.log(err));
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.find()    
+  Product.find()
     .then((products) => {
       res.render("admin/products", {
         prods: products,
