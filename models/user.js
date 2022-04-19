@@ -13,42 +13,52 @@ const userSchema = new Schema({
   cart: {
     items: [
       {
-        productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true},
-        quantity: { type: Number, required: true},
+        productId: {
+          type: Schema.Types.ObjectId,
+          ref: "Product",
+          required: true,
+        },
+        quantity: { type: Number, required: true },
       },
     ],
   },
 });
 
-userSchema.methods.addToCart = function (product) {    
+userSchema.methods.addToCart = function (product) {
+  const cartProductIndex = this.cart.items.findIndex((cp) => {
+    return cp.productId.toString() === product._id.toString();
+  });
 
-    const cartProductIndex = this.cart.items.findIndex((cp) => {
-      return cp.productId.toString() === product._id.toString();
+  let newQuantity = 1;
+  const updatedCartItem = [...this.cart.items];
+
+  if (cartProductIndex >= 0) {
+    newQuantity = this.cart.items[cartProductIndex].quantity + 1;
+    updatedCartItem[cartProductIndex].quantity = newQuantity;
+  } else {
+    updatedCartItem.push({
+      productId: product._id,
+      quantity: newQuantity,
     });
-    
-    let newQuantity = 1;
-    const updatedCartItem = [...this.cart.items];
+  }
 
-    if (cartProductIndex >= 0) {
-  
-      newQuantity = this.cart.items[cartProductIndex].quantity + 1;
-      updatedCartItem[cartProductIndex].quantity = newQuantity;
-    } else {
-      updatedCartItem.push({
-        productId: product._id,
-        quantity: newQuantity,
-      });
-    }
+  const updatedCart = {
+    items: updatedCartItem,
+  };
+  this.cart = updatedCart;
+  return this.save();
+};
 
-    const updatedCart = {
-      items: updatedCartItem,
-    };
-    this.cart  = updatedCart;
-    return this.save();
-  
-}
+userSchema.methods.deleteItemFromCart = function (productId) {
+  const updatedCartItem = this.cart.items.filter(
+    (p) => p.productId.toString() !== productId.toString()
+  );
+   this.cart.items = updatedCartItem;
+   return this.save()
 
-module.exports = mongoose.model('User', userSchema)
+};
+
+module.exports = mongoose.model("User", userSchema);
 
 // const mongodb = require("mongodb");
 // const getDb = require("../util/database").getDb;
