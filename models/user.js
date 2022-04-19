@@ -43,6 +43,22 @@ class User {
       );
   }
 
+  addOrder() {
+    const db = getDb();
+    return db
+      .collection("orders")
+      .insertOne(this.cart)
+      .then((result) => {
+        this.cart = { item: [] };
+        return db
+      .collection("users")
+      .updateOne(
+        { _id: new mongodb.ObjectId(this._id) },
+        { $set: { cart: this.cart } }
+      );
+      });
+  }
+
   getCart() {
     const db = getDb();
     const cartProductIdList = this.cart.item.map((i) => i.productId);
@@ -57,21 +73,23 @@ class User {
             ...p,
             quantity: this.cart.item.find(
               (i) => i.productId.toString() === p._id.toString()
-            ).quantity
+            ).quantity,
           };
         });
       })
       .catch((error) => console.log(error));
   }
 
-  deleteItemFromCart (productId) {
+  deleteItemFromCart(productId) {
     const db = getDb();
-    const updatedCartItem = this.cart.item.filter(p => p.productId.toString() !== productId.toString())
+    const updatedCartItem = this.cart.item.filter(
+      (p) => p.productId.toString() !== productId.toString()
+    );
     return db
       .collection("users")
       .updateOne(
         { _id: new mongodb.ObjectId(this._id) },
-        { $set: { cart: {item: updatedCartItem} } }
+        { $set: { cart: { item: updatedCartItem } } }
       );
   }
 
