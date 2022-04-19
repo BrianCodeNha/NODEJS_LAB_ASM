@@ -79,7 +79,10 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.getProducts = (req, res, next) => {
   Product.find()
+    .select('title price')
+    .populate('userId', 'name')
     .then((products) => {
+      console.log("🚀 ~ file: admin.js ~ line 85 ~ .then ~ products", products)
       res.render("admin/products", {
         prods: products,
         pageTitle: "Admin Products",
