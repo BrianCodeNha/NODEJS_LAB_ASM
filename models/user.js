@@ -14,9 +14,21 @@ class User {
     return db.collection("users").insertOne(this);
   }
 
-  addToCart (product) {
-    // const cartProduct = this.cart.items.findIndex(cp => cp._id === product._id);
-    const updatedCart = {item: [{productId: product._id, quantity: 1}]};
+  addToCart (product) {   
+    const cartProductIndex =this.cart.item.findIndex(cp => {return cp.productId.toString() === product._id.toString()})
+    let newQuantity = 1;
+    const updatedCartItem = [...this.cart.item]
+
+    if(cartProductIndex >= 0) {
+      newQuantity = this.cart.item[cartProductIndex].quantity + 1;
+      updatedCartItem[cartProductIndex].quantity = newQuantity;
+    } else {
+      updatedCartItem.push({ productId: new mongodb.ObjectId(product._id) , quantity: newQuantity})
+    }
+    
+    const updatedCart = {
+      item: updatedCartItem
+    };
     const db = getDb();
     return db.collection('users').updateOne({_id: new mongodb.ObjectId(this._id)}, {$set: {cart: updatedCart}})
   }
