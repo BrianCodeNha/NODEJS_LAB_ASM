@@ -22,7 +22,7 @@ app.use((req, res, next) => {
   User.findUserById("625e444b1587ccd88a316167")
     .then(user => {
       req.user = user;
-      next();
+      next(); // chỉ để next ở đây, để bên dưới sẽ bị lỗi undefined user
     })
     .catch(err => console.log(err))
   
