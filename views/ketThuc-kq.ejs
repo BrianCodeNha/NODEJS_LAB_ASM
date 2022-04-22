@@ -14,7 +14,7 @@
                 <h3>Kết thúc ca làm việc</h3>
                 <h4>Nhân Viên: <%= name %></h4>
                 <p>Tổng thời gian làm việc trong ngày: <%= todayWorkingHour %></p>
-                <h5>Danh sách các phiên làm việc trong ngày</h5>
+                <p>Danh sách các phiên làm việc trong ngày</p>
                 <p>Ngày: <%= new Date().getDate() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getFullYear() %>  </p>
                 <% if (history) { for (let his of history) { %>
                     <p>

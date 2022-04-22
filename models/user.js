@@ -39,24 +39,24 @@ const userSchema = new Schema({
               
         history: {
             date: {
-                type: String,
-                require: true
+                type: String
+                
             },
             startTime: {
-                type: String,
-                require: true
+                type: String
+                
             },
             endTime: {
-                type: String,
-                require: true
+                type: String
+                
             },
             duration: {
                 type: Number,
-                require: true,
+                
             },
             location: {
                 type: String,
-                require: true
+                
             }
         }
     }

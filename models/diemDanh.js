@@ -7,11 +7,7 @@ const diemDanhSchema = new Schema({
         type: Schema.Types.ObjectId,
         require: true,
         ref: 'User'
-    },
-    todayWorkingHour: {
-        type: Number,
-        require: true
-    },
+    },    
     totalWorkingHour: {
         type: Number,
         require: true

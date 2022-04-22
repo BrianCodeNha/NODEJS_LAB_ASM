@@ -31,7 +31,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // set routes for app
 
 app.use((req, res, next) => {
-  User.findById('6261fc88d8c1b15a3c65134a')
+  User.findById('6262c8c62f26c34091196a6c')
     .then((user) => {
       req.user = user;
       next();

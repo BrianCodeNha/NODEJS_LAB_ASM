@@ -61,96 +61,103 @@ exports.getKetThuc = (req, res, next) => {
 
   User.findById(req.user._id)
     .then((user) => {
+      console.log(
+        "🚀 ~ file: employeeControllers.js ~ line 64 ~ .then ~ user",
+        user
+      );
+
       // cap nhat trang thai working user
       user.working = false;
 
-      // cap nhat endTime
+      // cap nhat endTime to local user
       const updatedEndTime = today.getTime();
       user.session.history.endTime = updatedEndTime;
+      console.log(
+        "🚀 ~ file: employeeControllers.js ~ line 70 ~ .then ~ updatedEndTime",
+        updatedEndTime
+      );
 
       // cap nhat duration
-      const updatedDuration =
-        (updatedEndTime - user.session.history.startTime) / 1000 / 60;
-
+      const updatedDuration = updatedEndTime - user.session.history.startTime;
       console.log(
-        "🚀 ~ file: employeeControllers.js ~ line 75 ~ .then ~ updatedDuration",
+        "🚀 ~ file: employeeControllers.js ~ line 74 ~ .then ~ user.session.history.startTime",
+        user.session.history.startTime
+      );
+      console.log(
+        "🚀 ~ file: employeeControllers.js ~ line 73 ~ .then ~ updatedDuration",
         updatedDuration
       );
-      // user.session.history.duration =
-      //   user.session.history.duration + updatedDuration; //minutes
+      user.session.history.duration = updatedDuration;
 
       //cap nhat len local req
-      return (req.user = user);
+      req.user = user;
+      return user.save();
     })
     .then((user) => {
       // cap nhat user va diemDanh cua user len database
-      DiemDanh.findOne({ userId: req.user._id }).then((userDiemDanh) => {
-        if (!userDiemDanh) {
-          const newUserDiemDanh = new DiemDanh({
-            userId: user._id,
-            todayWorkingHour: 0,
-            totalWorkingHour: 0,
-            history: [],
-          });
-          newUserDiemDanh.history.push(user.session.history);
-          user.session.history = {};
+      DiemDanh.findOne({ userId: user._id })
+        .then((userDiemDanh) => {
+          if (!userDiemDanh) {
+            const newUserDiemDanh = new DiemDanh({
+              userId: user._id,
+              totalWorkingHour: 0,
+              history: [],
+            });
+            newUserDiemDanh.history.push(user.session.history);
+            newUserDiemDanh.totalWorkingHour = newUserDiemDanh.totalWorkingHour + user.session.history.duration; // cong vao totalduration
 
-          async function updateDatabase1() {
-            await user.save();
-            await newUserDiemDanh.save();
-            return;
+            user.session.history = {};
+            req.user = user;
+            async function updateDatabase1() {
+              await user.save();
+              await newUserDiemDanh.save();
+            }
+            return updateDatabase1();
+          } else {
+            userDiemDanh.history.push(user.session.history);
+            userDiemDanh.totalWorkingHour = userDiemDanh.totalWorkingHour + user.session.history.duration; // cong vao totalduration
+
+            user.session.history = {};
+            req.user = user;
+
+            async function updateDatabase2() {
+              await user.save();
+              await userDiemDanh.save();
+            }
+            return updateDatabase2();
           }
-          updateDatabase1();
-        } else {
-          userDiemDanh.history.push(user.session.history);
-          user.session.history = {};
-          req.user = user;
+        })
+        .then(() => {
+          DiemDanh.findOne({ userId: req.user._id }).then((userDiemDanh) => {
+            var dt = new Date();
+            year = dt.getFullYear();
+            month = (dt.getMonth() + 1).toString().padStart(2, "0");
+            day = dt.getDate().toString().padStart(2, "0");
+            
+            const today = day + "/" + month + "/" + year;
 
-          async function updateDatabase2() {
-            await user.save();
-            await userDiemDanh.save();
-          }
-          updateDatabase2();
-        }
+            if (userDiemDanh) {
+              // filter sessions co ngay == ngay hom nay
+              todayHistory = userDiemDanh.history.filter(
+                (his) => his.date === today
+              );             
 
-        console.log(
-          "🚀 ~ file: employeeControllers.js ~ line 120 ~ .then ~ userDiemDanh",
-          userDiemDanh
-        );
-        return userDiemDanh;
-      });
-    })
-    .then(() => {
-      DiemDanh.findOne({ userId: req.user._id }).then((userDiemDanh) => {
-        const today = new Date();
-        if (userDiemDanh) {
-          todayHistory = userDiemDanh.history.filter(
-            (his) => his.date === today
-          );
-          console.log(
-            "🚀 ~ file: employeeControllers.js ~ line 129 ~ DiemDanh.findOne ~ todayHistory",
-            todayHistory
-          );
+              todayDuration = todayHistory
+                .map((his) => his.duration)
+                .reduce((prev, current) => prev + current, 0);              
 
-          todayDuration = todayHistory
-            .map((his) => his.duration)
-            .reduce((prev, current) => prev + current, 0);
-          console.log(
-            "🚀 ~ file: employeeControllers.js ~ line 133 ~ DiemDanh.findOne ~ todayDuration",
-            todayDuration
-          );
-
-          res.render("ketThuc-kq.ejs", {
-            pageTitle: "Kết thúc phiên làm việc",
-            path: "/ketthuc",
-            name: req.user.name,
-            history: userDiemDanh.history,
-            todayWorkingHour: userDiemDanh.todayWorkingHour,
-            working: req.user.working,
+              res.render("ketThuc-kq.ejs", {
+                pageTitle: "Kết thúc phiên làm việc",
+                path: "/ketthuc",
+                name: user.name,
+                history: userDiemDanh.history,
+                todayWorkingHour: new Date(todayDuration).toISOString().slice(11, 19),
+                working: user.working,
+              });
+            } else {
+              res.send("<h1> Not found History </h1>");
+            }
           });
-        } else {
-          res.send('<h1> Not found History </h1>')
-        }
-      });
+        });
     });
 };
