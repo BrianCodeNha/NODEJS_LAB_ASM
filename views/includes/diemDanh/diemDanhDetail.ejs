@@ -1,0 +1,21 @@
+<form action="/diemdanh" method="POST">
+  <h3>Tên Nhân Viên: <%= name %></h3>
+  <hr />
+  <div class="row container">
+    <form action="/diemdanh" method="POST">
+      <div class="col-4 centered">
+        <h4>Nơi làm việc:</h4>
+      </div>
+      <div class="col-4 centered">
+        <select name='location' class="btn centered">
+          <option value="company">Công Ty</option>
+          <option value="home">Nhà</option>
+          <option value="customer">Khách Hàng</option>
+        </select>
+      </div>
+      <div class="col-4 centered">
+        <button class="btn" type="submit">Submit</button>
+      </div>
+    </form>
+  </div>
+</form>

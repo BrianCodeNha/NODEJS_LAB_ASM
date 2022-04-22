@@ -1,0 +1,22 @@
+<div class="container">
+    <div class="row">
+        <div class="col-12 col-md-3 col-lg-3 centered">
+            <form action="/diemdanh" method="GET">
+                <button <% if(working) { %> disabled <% } %>  class="btn">Điểm danh</button>
+            </form>
+        </div>
+        <div class="col-12 col-md-3 col-lg-3 centered">
+            <form action="/kethuc" method="GET">
+                <button <% if(!working) { %> disabled <% } %> class="btn">Kết thúc làm việc</button>
+            </form>
+        </div>
+        <div class="col-12 col-md-3 col-lg-3 centered">
+            <form action="/nghiphep" method="GET">
+                <button class="btn">Nghỉ phép</button>
+            </form>
+        </div>
+        <div class="col-12 col-md-3 col-lg-3 centered">
+            <p>Trạng thái: <% if(working) { %>Đang làm việc<% } else {%>Không làm việc<% } %></p>
+        </div>
+    </div>
+</div>

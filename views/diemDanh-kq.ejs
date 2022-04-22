@@ -1,0 +1,21 @@
+<%- include('./includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css">
+    </head>
+
+    <body>
+        <%- include('./includes/navigation.ejs') %>
+
+            <main>
+                <h1>Điểm Danh</h1>
+                <%- include('./includes/clock.ejs') %>
+                <hr>
+                <%- include('./includes/diemDanh/controlbar.ejs') %>
+                <hr>
+                <h3>Điểm danh thành công</h3>
+                <ul>
+                    <li>Nhân Viên: <%= name %></li>
+                    <li>Nơi Làm việc: <%= location %></li>
+                    <li>Thời gian bắt đầu: <%= time %> </li>
+                </ul>
+            </main>
+            <%- include('./includes/end.ejs') %>

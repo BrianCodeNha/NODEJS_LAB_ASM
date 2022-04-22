@@ -1,0 +1,30 @@
+<%- include('./includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css">
+    </head>
+
+    <body>
+        <%- include('./includes/navigation.ejs') %>
+
+            <main>
+                <h1>Kết thúc phiên làm việc</h1>
+                <%- include('./includes/clock.ejs') %>
+                <hr>
+                <%- include('./includes/diemDanh/controlbar.ejs') %>
+                <hr>
+                <h3>Kết thúc ca làm việc</h3>
+                <h4>Nhân Viên: <%= name %></h4>
+                <p>Tổng thời gian làm việc trong ngày: <%= todayWorkingHour %></p>
+                <h5>Danh sách các phiên làm việc trong ngày</h5>
+                <p>Ngày: <%= new Date().getDate() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getFullYear() %>  </p>
+                <% if (history) { for (let his of history) { %>
+                    <p>
+                        Bắt đầu: <%= new Date(1*his.startTime).getHours() + ':' + new Date(1*his.startTime).getMinutes() + ':' + new Date(1*his.startTime).getSeconds() %> - Kết thúc: <%= new Date(1*his.endTime).getHours() + ':' + new Date(1*his.endTime).getMinutes() + ':' + new Date(1*his.endTime).getSeconds() %> # Nơi làm việc: <%= his.location %>                        
+                    </p>
+                    
+                    <%} } else { %>
+
+                        <h3>Không có lịch sử làm việc</h3>
+                        <% } %>                           
+           
+            </main>
+            <%- include('./includes/end.ejs') %>
