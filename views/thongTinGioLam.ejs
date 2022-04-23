@@ -10,23 +10,40 @@
                 <%- include('./includes/clock.ejs') %>               
                 <hr>                
                 <h4>Nhân Viên: <%= name %></h4>
-                <p>Tổng thời gian làm việc: <%=  %></p>
+                <p>Tổng thời gian làm việc: <%= totalWorkingHours %></p>
                 <p>Danh sách các phiên làm việc được ghi nhận:</p>
-                <p>Ngày: <%=  %>  </p>
-                <% if (history) { for (let his of history) { %>
-                    <p>
-                        Bắt đầu: <%= new Date(1*his.startTime).getHours() + ':' + new Date(1*his.startTime).getMinutes() + ':' + new Date(1*his.startTime).getSeconds() %> - Kết thúc: <%= new Date(1*his.endTime).getHours() + ':' + new Date(1*his.endTime).getMinutes() + ':' + new Date(1*his.endTime).getSeconds() %> # Nơi làm việc: <%= his.location %> # Thời gian làm việc: <%= his.location %>                         
-                    </p>
-                    <% } %>
-                    <p>
-                        Tổng số giờ làm trong ngày: <%=  %> <br/>                        
-                        Số giờ overTime được tính: <%=  %> <br/>
-                        AnnualLeave đã đăng ký: <%=  %> <br/>                        
-                    </p>
-                    <% } else { %>
+                <% if (dateList) { for (let date of dateList) { %>
 
-                        <h3>Không có lịch sử làm việc</h3>
-                        <% } %>                           
+                    <p>Ngày: <%= date %>  </p>                    
+
+                    <% if (history) { 
+                        const his1 = history.filter(his => his.date.toString() === date.toString());
+
+                        const workingTimeOfHis1 = his1.map(his => his.duration).reduce((prev, current) => prev + current)
+                        %>
+                        <p>
+                            Tổng số giờ làm trong ngày: <%= new Date(workingTimeOfHis1).toISOString().slice(11, 19) %> <br/>                        
+                            Số giờ overTime được tính: <%= (8*60*60*1000 > workingTimeOfHis1) ? 0 : (workingTimeOfHis1 - 8*60*60*1000 ) %> <br/>
+                            AnnualLeave đã đăng ký: <%=  %> <br/>                        
+                        </p>
+                        <%
+                        for (let his of his1) { %>
+                        <p>
+                            Bắt đầu: <%= new Date(1*his.startTime).getHours() + ':' + new Date(1*his.startTime).getMinutes() + ':' + new Date(1*his.startTime).getSeconds() %> - Kết thúc: <%= new Date(1*his.endTime).getHours() + ':' + new Date(1*his.endTime).getMinutes() + ':' + new Date(1*his.endTime).getSeconds() %> # Nơi làm việc: <%= his.location %> # Thời gian làm việc: <%= new Date(his.duration).toISOString().slice(11, 19) %>                         
+                        </p>
+                        <% } %>
+                        
+                        <% } else { %>
+    
+                            <h3>Không có lịch sử làm việc</h3>
+                            <% } %>
+
+                    <% }} else { %>
+
+                        <h3>Chưa ghi nhận ngày làm việc nào!!!</h3>
+
+                        <% } %>               
+                                           
            <hr>
            <h2>Thông tin chi tiết lương tháng</h2>
            <form action="/thongtingiolam" method="POST">

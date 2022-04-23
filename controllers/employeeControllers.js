@@ -147,6 +147,9 @@ exports.getKetThuc = (req, res, next) => {
         });
     });
 };
+
+
+// DANG KY NGHI PHEP
 let totalAnnualLeave = 0;
 let registerDateList = []; // danh sach ngay nghi da dang ky
 let annualLeaveReason = '';
@@ -268,12 +271,25 @@ exports.postProfile = (req, res, next) => {
 }
 
 exports.getThongTinGioLam = (req, res, next) => {
-  res.render('thongTinGioLam.ejs',{
-    pageTitle: 'Thông tin giờ làm',
-    path: '/thongtingiolam',
-    name: req.user.name,
-    history: []
-  })
+  DiemDanh.findOne({userId: req.user._id}).then((diemDanhOfUser) => {
+    const totalWorkingHours = diemDanhOfUser.totalWorkingHour
+    console.log("🚀 ~ file: employeeControllers.js ~ line 273 ~ DiemDanh.findOne ~ totalWorkingHours", totalWorkingHours)
+
+    const dateList = diemDanhOfUser.history.map(his => his.date);
+    const uniqueDateList = dateList.filter((date, index) => dateList.indexOf(date) == index)
+    console.log("🚀 ~ file: employeeControllers.js ~ line 276 ~ DiemDanh.findOne ~ dateList", dateList)
+
+    res.render('thongTinGioLam.ejs',{
+      pageTitle: 'Thông tin giờ làm',
+      path: '/thongtingiolam',
+      name: req.user.name,
+      history: diemDanhOfUser.history,
+      totalWorkingHours: new Date(totalWorkingHours).toISOString().slice(11, 19) ,
+      dateList: uniqueDateList,
+      annualLeave: []
+    })
+  })  
+  .catch((err) => {console.log(err)});
 }
 
 
