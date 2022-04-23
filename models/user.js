@@ -23,9 +23,34 @@ const userSchema = new Schema({
         type: String,
         require: true
     },
-    annualLeave: {
-        type: Number,
-        require: true
+    annualLeave: {        
+        totalAnnualLeave: {
+            type: Number, // mac dinh admin tu nhap, check moi khi dang ky ngay moi dam bao khong vươt qua muc hien tai
+            require: true
+        },
+        details: [
+            {
+                timeDetails: [
+                    {
+                        date: {
+                            type: String,
+                            require: true
+                        },
+                        hours: {
+                            type: Number, // <= totalAnnualLeave
+                            require: true,
+                            max: [8, 'không thể đăng ký nhiều hơn 8h/ngày'],
+                            min: [0, 'không thể đăng ký số âm']
+                        }
+                    }
+                ],
+                reason: {
+                    type: String,
+                    require: true
+                },
+            }
+        ]
+
     },
     imageUrl: {
         type: String,

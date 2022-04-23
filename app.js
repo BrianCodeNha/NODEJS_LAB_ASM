@@ -31,7 +31,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // set routes for app
 
 app.use((req, res, next) => {
-  User.findById('6262c8c62f26c34091196a6c')
+  User.findById('62640aa2339d9779678250da')
     .then((user) => {
       req.user = user;
       next();
@@ -61,7 +61,10 @@ mongoose
           salaryScale: 2,
           startDate: "01/01/2022",
           department: "IT",
-          annualLeave: 2,
+          annualLeave: {
+            totalAnnualLeave: 5,
+            details: []
+          },
           imageUrl:
             "https://icdn.dantri.com.vn/thumb_w/640/2019/12/20/diem-danh-12-hot-boy-noi-bat-nhat-1-nam-quadocx-1576851098388.jpeg",
           session: {

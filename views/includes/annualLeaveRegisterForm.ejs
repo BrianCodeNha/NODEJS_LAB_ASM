@@ -1,0 +1,37 @@
+<form method="POST" action="/nghiphep">
+  <div class="row">
+    <div style="padding: 10px;" class="col">
+      <label>Lý do xin nghỉ</label>
+      <input style="margin: 10px;" class="centered" type="text" name="annualLeaveReasons" /> <br/>
+      <label>Đăng ký ngày nghỉ</label>
+      <input style="margin: 10px;" class="centered" type="date" name="annualLeave" required /> <br/>
+      <label>Số giờ đăng ký nghỉ</label>
+      <input style="margin: 10px;" max="8" class="centered" type="number" name="annualLeaveHours" required /> 
+      <br />      
+      <button class="btn centered" type="submit">Thêm ngày&giờ nghỉ</button>      
+    </form>
+    <form action="/resetRegisterData" method="GET">
+      <button class="btn centered" >Reset</button>        
+    </form>
+      <hr/>
+      <form action="/dangkyngaynghi" method="POST">
+                  
+          <button <% if (!isRegister) { %> disabled <% } %> class="btn centered" type="submit">Đăng ký ngày nghỉ</button>
+      </form>
+    </div>
+
+    <div class="col">
+      <p>Tổng số ngày nghỉ còn lại: <%= annualLeave %></p>
+      <p>Lý do: <%= reason %> </p>
+      <p>Danh sách đăng ký ngày nghỉ</p>
+      <p style="color: red"><%= error ? error : '' %></p>
+      <% if (dateList) { for (let date of dateList) { %> <ul>
+        <li>
+            Ngày: <%= date.date %> - thời gian: <%= date.hours %> giờ
+        </li>
+      </ul>  <% } } else { %>
+      <p>Chưa đăng ký danh sách</p>
+      <% } %>
+    </div>
+  </div>
+

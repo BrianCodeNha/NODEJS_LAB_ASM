@@ -60,11 +60,7 @@ exports.getKetThuc = (req, res, next) => {
   // fetch user database
 
   User.findById(req.user._id)
-    .then((user) => {
-      console.log(
-        "🚀 ~ file: employeeControllers.js ~ line 64 ~ .then ~ user",
-        user
-      );
+    .then((user) => {      
 
       // cap nhat trang thai working user
       user.working = false;
@@ -72,22 +68,12 @@ exports.getKetThuc = (req, res, next) => {
       // cap nhat endTime to local user
       const updatedEndTime = today.getTime();
       user.session.history.endTime = updatedEndTime;
-      console.log(
-        "🚀 ~ file: employeeControllers.js ~ line 70 ~ .then ~ updatedEndTime",
-        updatedEndTime
-      );
+      
 
       // cap nhat duration
       const updatedDuration = updatedEndTime - user.session.history.startTime;
-      console.log(
-        "🚀 ~ file: employeeControllers.js ~ line 74 ~ .then ~ user.session.history.startTime",
-        user.session.history.startTime
-      );
-      console.log(
-        "🚀 ~ file: employeeControllers.js ~ line 73 ~ .then ~ updatedDuration",
-        updatedDuration
-      );
-      user.session.history.duration = updatedDuration;
+     
+      user.session.history.duration = updatedDuration ? updatedDuration : 0;
 
       //cap nhat len local req
       req.user = user;
@@ -150,7 +136,7 @@ exports.getKetThuc = (req, res, next) => {
                 pageTitle: "Kết thúc phiên làm việc",
                 path: "/ketthuc",
                 name: user.name,
-                history: userDiemDanh.history,
+                history: todayHistory,
                 todayWorkingHour: new Date(todayDuration).toISOString().slice(11, 19),
                 working: user.working,
               });
@@ -161,3 +147,98 @@ exports.getKetThuc = (req, res, next) => {
         });
     });
 };
+let totalAnnualLeave = 0;
+let registerDateList = []; // danh sach ngay nghi da dang ky
+let annualLeaveReason = '';
+let totalRegisteringDay = (registerDateList.map(date => date.hours).reduce((prev, cur) => prev + cur, 0))/8.0;
+let isRegister = true;
+
+exports.getResetRegisterData = (req, res, next) => { // xoa data ngay de nhap lại
+  registerDateList = [];  
+  totalRegisteringDay = 0;
+  isRegister = true;
+  totalAnnualLeave = req.user.annualLeave.totalAnnualLeave;  
+  res.redirect('/nghiphep');
+}
+
+exports.getNghiPhep = (req, res, next) => { // render form nhap ngay nghi
+  registerDateList = [];  
+  totalRegisteringDay = 0;
+  isRegister = true;
+  User.findById(req.user._id).then((user) => {
+    return totalAnnualLeave = user.annualLeave.totalAnnualLeave;
+  }).then(() => {
+
+    res.render('annualLeave.ejs',{
+      pageTitle: 'Đăng ký nghỉ phép',
+      path: '/nghiphep',
+      working: req.user.working,
+      annualLeave: totalAnnualLeave,
+      dateList: registerDateList,
+      error: '',
+      isRegister: isRegister,
+      reason: req.body.annualLeaveReasons    
+    });
+  })  
+}
+exports.postNghiPhep = (req, res, next) => { // add data ngay nghi vao bo nho local de kiem tra
+  
+  const annualLeaveDetails = { // data tưng ngay nghi dc luu vao object
+    date: req.body.annualLeave,
+    hours: req.body.annualLeaveHours
+  }
+
+  // check trung ngay nghi da nhap nao
+  const indexOfRegisterDateList = registerDateList.findIndex(obj => obj.date === annualLeaveDetails.date)
+
+  // tinh tong so ngay va gio dang dang ky nghi phep
+  
+  totalRegisteringDay +=  (annualLeaveDetails.hours)/8.0   
+  
+  let error = ''; // bao loi tren browser
+
+  console.log("🚀 ~ file: employeeControllers.js ~ line 197 ~ totalAnnualLeave", totalAnnualLeave)
+  if(totalAnnualLeave === 0) {
+    error = 'Số ngày nghỉ được phép đăng ký không còn! Bạn không thể đăng ký! Vui lòng liên hệ admin!'
+  } else if(annualLeaveDetails.hours/8.0 > totalAnnualLeave) {    
+    isRegister = false;
+    error = 'Số ngày nghỉ đăng ký vượt quá số ngày nghỉ còn lại!! vui lòng kiểm tra lại'
+  } else if(indexOfRegisterDateList >= 0  ){
+    error = 'Thông tin ngày nghỉ bạn nhập đã bị trùng! Vui lòng nhập ngày khác hoặc bấm reset!'
+  } else {
+    registerDateList.push(annualLeaveDetails); // them thong tin dang ky vao list    
+    totalAnnualLeave = (totalAnnualLeave -  annualLeaveDetails.hours/8.0).toFixed(1); // lấy tổng số ngày nghỉ còn lại - số ngày nghỉ đăng ký.
+  } 
+  console.log("🚀 ~ file: employeeControllers.js ~ line 206 ~ totalAnnualLeave", totalAnnualLeave)
+  console.log("🚀 ~ file: employeeControllers.js ~ line 206 ~ totalRegisteringDay", totalRegisteringDay)
+  annualLeaveReason = req.body.annualLeaveReasons;
+  res.render('annualLeave.ejs',{
+    pageTitle: 'Đăng ký nghỉ phép',
+    path: '/nghiphep',
+    working: req.user.working,
+    annualLeave: totalAnnualLeave,
+    dateList: registerDateList,
+    error: error ? error : '' ,
+    isRegister: isRegister,
+    reason: annualLeaveReason
+  });
+}
+
+exports.postDangKyNghiPhep = (req, res, next) => {
+  const updatedAnnualLeave = {
+    totalAnnualLeave: totalAnnualLeave,
+    details: [...req.user.annualLeave.details, 
+      {
+        timeDetails: registerDateList,
+        reason: annualLeaveReason
+      }
+    ]
+  }  
+  req.user.annualLeave = updatedAnnualLeave;
+  async function updateDatabase () {
+    req.user.save();
+    res.redirect('/nghiphep')
+  }
+  updateDatabase();
+  
+}
