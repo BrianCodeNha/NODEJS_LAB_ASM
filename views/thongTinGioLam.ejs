@@ -1,0 +1,51 @@
+<%- include('./includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css">
+    </head>
+
+    <body>
+        <%- include('./includes/navigation.ejs') %>
+
+            <main>
+                <h2>Thông tin giờ làm</h2>
+                <%- include('./includes/clock.ejs') %>               
+                <hr>                
+                <h4>Nhân Viên: <%= name %></h4>
+                <p>Tổng thời gian làm việc: <%=  %></p>
+                <p>Danh sách các phiên làm việc được ghi nhận:</p>
+                <p>Ngày: <%=  %>  </p>
+                <% if (history) { for (let his of history) { %>
+                    <p>
+                        Bắt đầu: <%= new Date(1*his.startTime).getHours() + ':' + new Date(1*his.startTime).getMinutes() + ':' + new Date(1*his.startTime).getSeconds() %> - Kết thúc: <%= new Date(1*his.endTime).getHours() + ':' + new Date(1*his.endTime).getMinutes() + ':' + new Date(1*his.endTime).getSeconds() %> # Nơi làm việc: <%= his.location %> # Thời gian làm việc: <%= his.location %>                         
+                    </p>
+                    <% } %>
+                    <p>
+                        Tổng số giờ làm trong ngày: <%=  %> <br/>                        
+                        Số giờ overTime được tính: <%=  %> <br/>
+                        AnnualLeave đã đăng ký: <%=  %> <br/>                        
+                    </p>
+                    <% } else { %>
+
+                        <h3>Không có lịch sử làm việc</h3>
+                        <% } %>                           
+           <hr>
+           <h2>Thông tin chi tiết lương tháng</h2>
+           <form action="/thongtingiolam" method="POST">
+               <select name="month" id="month">
+                   <option value="4">Tháng 4</option>
+                   <option value="3">Tháng 3</option>
+               </select>
+           </form>
+           <p>Lương tháng: <%=  %></p>
+           <p>overTime: <%=  %></p>
+           <p>annualLeave: <%=  %></p>
+           <p>số giờ làm thiếu: <%=  %></p>
+
+
+            </main>
+            <%- include('./includes/end.ejs') %>
+
+
+
+
+
+

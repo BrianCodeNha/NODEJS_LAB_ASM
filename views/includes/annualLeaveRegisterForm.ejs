@@ -33,5 +33,17 @@
       <p>Chưa đăng ký danh sách</p>
       <% } %>
     </div>
+    <hr>
+    <h4>Danh sách ngày nghỉ đã đăng ký</h4>
+    <% if (registeredList) { for (let detail of registeredList.details) { %> 
+      <p>Lý do: <%= detail.reason %> </p>
+      <%  for (let date of detail.timeDetails) { %>
+      <ul>
+      <li>
+          Ngày: <%= date.date %> - thời gian: <%= date.hours %> giờ
+      </li>
+    </ul>  <%}}} else { %>
+    <p>Chưa đăng ký danh sách</p>
+    <% } %>
   </div>
 

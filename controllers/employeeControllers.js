@@ -152,7 +152,7 @@ let registerDateList = []; // danh sach ngay nghi da dang ky
 let annualLeaveReason = '';
 let totalRegisteringDay = (registerDateList.map(date => date.hours).reduce((prev, cur) => prev + cur, 0))/8.0;
 let isRegister = true;
-
+let registeredList = {};
 exports.getResetRegisterData = (req, res, next) => { // xoa data ngay de nhap lại
   registerDateList = [];  
   totalRegisteringDay = 0;
@@ -166,9 +166,9 @@ exports.getNghiPhep = (req, res, next) => { // render form nhap ngay nghi
   totalRegisteringDay = 0;
   isRegister = true;
   User.findById(req.user._id).then((user) => {
+    registeredList = user.annualLeave   
     return totalAnnualLeave = user.annualLeave.totalAnnualLeave;
   }).then(() => {
-
     res.render('annualLeave.ejs',{
       pageTitle: 'Đăng ký nghỉ phép',
       path: '/nghiphep',
@@ -177,7 +177,8 @@ exports.getNghiPhep = (req, res, next) => { // render form nhap ngay nghi
       dateList: registerDateList,
       error: '',
       isRegister: isRegister,
-      reason: req.body.annualLeaveReasons    
+      reason: req.body.annualLeaveReasons,
+      registeredList: registeredList    
     });
   })  
 }
@@ -220,7 +221,8 @@ exports.postNghiPhep = (req, res, next) => { // add data ngay nghi vao bo nho lo
     dateList: registerDateList,
     error: error ? error : '' ,
     isRegister: isRegister,
-    reason: annualLeaveReason
+    reason: annualLeaveReason,
+    registeredList: registeredList
   });
 }
 
@@ -241,4 +243,40 @@ exports.postDangKyNghiPhep = (req, res, next) => {
   }
   updateDatabase();
   
+}
+
+exports.getProfile = (req, res, next) => {
+  res.render('profile.ejs',{
+    pageTitle: 'Thông tin nhân viên',
+    path: '/profile',
+    user: req.user
+  })
+}
+
+exports.postProfile = (req, res, next) => {
+  req.user.imageUrl = req.body.imageUrl;
+  async function updateDatabase() {
+    await req.user.save();
+    await res.render('profile.ejs',{
+      pageTitle: 'Thông tin nhân viên',
+      path: '/profile',
+      user: req.user
+    })
+
+  }
+  updateDatabase();
+}
+
+exports.getThongTinGioLam = (req, res, next) => {
+  res.render('thongTinGioLam.ejs',{
+    pageTitle: 'Thông tin giờ làm',
+    path: '/thongtingiolam',
+    name: req.user.name,
+    history: []
+  })
+}
+
+
+exports.postThongTinGioLam = (req, res, next) => {
+
 }
