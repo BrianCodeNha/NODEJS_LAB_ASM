@@ -6,10 +6,16 @@
         <%- include('./includes/navigation.ejs') %>
 
             <main>
+                <% 
+                let totalOverTime = 0;
+                let annualLeaveTime = 0;
+                let minusWorkingHours = 0;
+                
+                %>
                 <h2>Thông tin giờ làm</h2>
                 <%- include('./includes/clock.ejs') %>               
                 <hr>                
-                <h4>Nhân Viên: <%= name %></h4>
+                <h4>Nhân Viên: <%= user.name %></h4>
                 <p>Tổng thời gian làm việc: <%= totalWorkingHours %></p>
                 <p>Danh sách các phiên làm việc được ghi nhận:</p>
                 <% if (dateList) { for (let date of dateList) { %>
@@ -18,13 +24,17 @@
 
                     <% if (history) { 
                         const his1 = history.filter(his => his.date.toString() === date.toString());
-
-                        const workingTimeOfHis1 = his1.map(his => his.duration).reduce((prev, current) => prev + current)
+                        const annualLeaveDetail1 = annualLeave.filter(annual => annual.date.toString() === date.toString())
+                        const totalAnnualLeaveHour1 =  annualLeaveDetail1.map(annualLeave => annualLeave.hours).reduce((prev, cur) => prev + cur,0)
+                        
+                        const workingTimeOfHis1 = his1.map(his => his.duration).reduce((prev, current) => prev + current,0)
                         %>
                         <p>
                             Tổng số giờ làm trong ngày: <%= new Date(workingTimeOfHis1).toISOString().slice(11, 19) %> <br/>                        
-                            Số giờ overTime được tính: <%= (8*60*60*1000 > workingTimeOfHis1) ? 0 : (workingTimeOfHis1 - 8*60*60*1000 ) %> <br/>
-                            AnnualLeave đã đăng ký: <%=  %> <br/>                        
+                            Số giờ overTime được tính: <% if (8*60*60*1000 > workingTimeOfHis1) { %> 0 <% } else {totalOverTime += (workingTimeOfHis1/(60*60*1000) - 8) %> <%= (workingTimeOfHis1/(60*60*1000) - 8).toFixed(1) %> <% } %><br/>
+                            AnnualLeave đã đăng ký: <%= totalAnnualLeaveHour1  %> <br/>
+                            Số giờ làm thiếu: <% if (8*60*60*1000 > workingTimeOfHis1) { minusWorkingHours += (8 - workingTimeOfHis1/(60*60*1000)) %> <%= (8 - workingTimeOfHis1/(60*60*1000)).toFixed(1) %> <% } else {totalOverTime += (workingTimeOfHis1/(60*60*1000) - 8) %> 0 <% } %> <br/>    
+                                                
                         </p>
                         <%
                         for (let his of his1) { %>
@@ -48,14 +58,13 @@
            <h2>Thông tin chi tiết lương tháng</h2>
            <form action="/thongtingiolam" method="POST">
                <select name="month" id="month">
-                   <option value="4">Tháng 4</option>
-                   <option value="3">Tháng 3</option>
+                   <option value="4">Tháng 4</option>                   
                </select>
            </form>
-           <p>Lương tháng: <%=  %></p>
-           <p>overTime: <%=  %></p>
-           <p>annualLeave: <%=  %></p>
-           <p>số giờ làm thiếu: <%=  %></p>
+           <p>Lương tháng: <%= (user.salaryScale*3000000 + (totalOverTime - minusWorkingHours) * 200000).toFixed(0) %></p>
+           <p>overTime: <%= totalOverTime.toFixed(1) %></p>
+           <p>annualLeave: <%= annualLeaveTime.toFixed(1) %></p>
+           <p>số giờ làm thiếu: <%= minusWorkingHours %></p>
 
 
             </main>

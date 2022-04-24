@@ -186,11 +186,16 @@ exports.getNghiPhep = (req, res, next) => { // render form nhap ngay nghi
   })  
 }
 exports.postNghiPhep = (req, res, next) => { // add data ngay nghi vao bo nho local de kiem tra
+
+  const dateOfDetails = req.body.annualLeave.split('-')
+  const correctDate = dateOfDetails[2] + '/' + dateOfDetails[1] + '/' + dateOfDetails[0]
+
   
   const annualLeaveDetails = { // data tưng ngay nghi dc luu vao object
-    date: req.body.annualLeave,
+    date: correctDate,
     hours: req.body.annualLeaveHours
   }
+ 
 
   // check trung ngay nghi da nhap nao
   const indexOfRegisterDateList = registerDateList.findIndex(obj => obj.date === annualLeaveDetails.date)
@@ -273,20 +278,23 @@ exports.postProfile = (req, res, next) => {
 exports.getThongTinGioLam = (req, res, next) => {
   DiemDanh.findOne({userId: req.user._id}).then((diemDanhOfUser) => {
     const totalWorkingHours = diemDanhOfUser.totalWorkingHour
-    console.log("🚀 ~ file: employeeControllers.js ~ line 273 ~ DiemDanh.findOne ~ totalWorkingHours", totalWorkingHours)
+    const annualLeaveDetails = req.user.annualLeave.details;
+    const annualLeaveTimeDetails = annualLeaveDetails.map(detail => detail.timeDetails).flat(Infinity)
+   
+    console.log("🚀 ~ file: employeeControllers.js ~ line 278 ~ DiemDanh.findOne ~ annualLeaveTimeDetails", annualLeaveTimeDetails)
 
     const dateList = diemDanhOfUser.history.map(his => his.date);
     const uniqueDateList = dateList.filter((date, index) => dateList.indexOf(date) == index)
-    console.log("🚀 ~ file: employeeControllers.js ~ line 276 ~ DiemDanh.findOne ~ dateList", dateList)
+    
 
     res.render('thongTinGioLam.ejs',{
       pageTitle: 'Thông tin giờ làm',
       path: '/thongtingiolam',
-      name: req.user.name,
+      user: req.user,
       history: diemDanhOfUser.history,
       totalWorkingHours: new Date(totalWorkingHours).toISOString().slice(11, 19) ,
       dateList: uniqueDateList,
-      annualLeave: []
+      annualLeave: annualLeaveTimeDetails
     })
   })  
   .catch((err) => {console.log(err)});
