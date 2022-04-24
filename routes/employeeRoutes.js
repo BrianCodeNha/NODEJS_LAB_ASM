@@ -23,5 +23,8 @@ router.post('/profile',employeeControllers.postProfile)
 router.get('/thongtingiolam',employeeControllers.getThongTinGioLam)
 router.post('/thongtingiolam',employeeControllers.postThongTinGioLam)
 
+router.get('/covidcanhan',employeeControllers.getCovidProfile)
+router.post('/covidcanhan',employeeControllers.postCovidProfile)
+
 
 module.exports = router;

@@ -12,7 +12,7 @@
                 let minusWorkingHours = 0;
                 
                 %>
-                <h2>Thông tin giờ làm</h2>
+                <h2>Thông tin giờ làm tháng <%= currentMonth %></h2>
                 <%- include('./includes/clock.ejs') %>               
                 <hr>                
                 <h4>Nhân Viên: <%= user.name %></h4>
@@ -55,16 +55,18 @@
                         <% } %>               
                                            
            <hr>
-           <h2>Thông tin chi tiết lương tháng</h2>
+           <h2>Thông tin lương tháng <%= currentMonth %></h2>
            <form action="/thongtingiolam" method="POST">
                <select name="month" id="month">
-                   <option value="4">Tháng 4</option>                   
+                   <option value="04">Tháng 4</option>
+                   <option value="03">Tháng 3</option>                   
                </select>
+               <button type="submit">View</button>
            </form>
-           <p>Lương tháng: <%= (user.salaryScale*3000000 + (totalOverTime - minusWorkingHours) * 200000).toFixed(0) %></p>
+           <p>Lương tháng: <%= Math.ceil(user.salaryScale*3000000 + (totalOverTime - minusWorkingHours) * 200000).toLocaleString('vi-VN') %> VND</p>
            <p>overTime: <%= totalOverTime.toFixed(1) %></p>
            <p>annualLeave: <%= annualLeaveTime.toFixed(1) %></p>
-           <p>số giờ làm thiếu: <%= minusWorkingHours %></p>
+           <p>số giờ làm thiếu: <%= minusWorkingHours.toFixed(1) %></p>
 
 
             </main>

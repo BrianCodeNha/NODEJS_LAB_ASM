@@ -1,0 +1,24 @@
+<%- include('./includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css">
+    </head>
+
+    <body>
+        <%- include('./includes/navigation.ejs') %>
+
+            <main>
+                <h1>Đăng ký Thông Tin Covid Thành Công</h1>
+                <%- include('./includes/clock.ejs') %>
+                <hr>
+                <%- include('./includes/diemDanh/controlbar.ejs') %>                
+                <ul>
+                    <li>Nhân Viên: <%= name %></li>
+                    <li>Thân nhiệt: <%= temperature  %> độ C</li>
+                    <li>vaccine Lần tiêm đầu: <%= firstTimeType %> </li>
+                    <li>Thời gian Lần tiêm đầu: <%= firstTimeDate %> </li>
+                    <li>Vacien Lần tiêm sau: <%= secondTimeType %> </li>
+                    <li>Thời gian Lần tiêm sau: <%= secondTimeDate %> </li>
+                    <li>Tình trạng sức khoẻ: <%= status %> </li>
+                    
+                </ul>
+            </main>
+            <%- include('./includes/end.ejs') %>

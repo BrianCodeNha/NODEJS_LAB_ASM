@@ -277,30 +277,105 @@ exports.postProfile = (req, res, next) => {
 
 exports.getThongTinGioLam = (req, res, next) => {
   DiemDanh.findOne({userId: req.user._id}).then((diemDanhOfUser) => {
-    const totalWorkingHours = diemDanhOfUser.totalWorkingHour
+    const currentMonth = ("0" + (new Date().getMonth() + 1)).slice(-2);
+    console.log("🚀 ~ file: employeeControllers.js ~ line 281 ~ DiemDanh.findOne ~ currentMonth", currentMonth)
+
+    const currentMonthHistory = diemDanhOfUser.history.filter(obj => obj.date.split('/')[1] = currentMonth)
+    const currentMonthTotalWorkingHour = currentMonthHistory.map(obj => obj.duration).reduce((prev, current) => prev + current,0)
+    
     const annualLeaveDetails = req.user.annualLeave.details;
-    const annualLeaveTimeDetails = annualLeaveDetails.map(detail => detail.timeDetails).flat(Infinity)
+    const annualLeaveTimeDetails = annualLeaveDetails.map(detail => detail.timeDetails).flat(Infinity);
+    const currentMonthAnualLeaveTimeDetails = annualLeaveTimeDetails.filter(obj => obj.date.split('/')[1] === currentMonth)
    
     console.log("🚀 ~ file: employeeControllers.js ~ line 278 ~ DiemDanh.findOne ~ annualLeaveTimeDetails", annualLeaveTimeDetails)
 
     const dateList = diemDanhOfUser.history.map(his => his.date);
-    const uniqueDateList = dateList.filter((date, index) => dateList.indexOf(date) == index)
+    const uniqueDateList = dateList.filter((date, index) => dateList.indexOf(date) == index);
+    const currentMonthDateList = uniqueDateList.filter(date => date.split('/')[1] === currentMonth)
     
 
     res.render('thongTinGioLam.ejs',{
       pageTitle: 'Thông tin giờ làm',
       path: '/thongtingiolam',
       user: req.user,
-      history: diemDanhOfUser.history,
-      totalWorkingHours: new Date(totalWorkingHours).toISOString().slice(11, 19) ,
-      dateList: uniqueDateList,
-      annualLeave: annualLeaveTimeDetails
+      history: currentMonthHistory,
+      totalWorkingHours: new Date(currentMonthTotalWorkingHour).toISOString().slice(11, 19) ,
+      dateList: currentMonthDateList,
+      annualLeave: currentMonthAnualLeaveTimeDetails,
+      currentMonth: currentMonth
+    })
+  })  
+  .catch((err) => {console.log(err)});
+}
+// trang dang ky thong tin covid + trang tri frontend
+
+exports.postThongTinGioLam = (req, res, next) => {
+  DiemDanh.findOne({userId: req.user._id}).then((diemDanhOfUser) => {
+    const currentMonth = req.body.month;
+    console.log("🚀 ~ file: employeeControllers.js ~ line 281 ~ DiemDanh.findOne ~ currentMonth", currentMonth)
+
+    const currentMonthHistory = diemDanhOfUser.history.filter(obj => obj.date.split('/')[1] === currentMonth)
+    const currentMonthTotalWorkingHour = currentMonthHistory.map(obj => obj.duration).reduce((prev, current) => prev + current,0)
+    console.log("🚀 ~ file: employeeControllers.js ~ line 319 ~ DiemDanh.findOne ~ currentMonthHistory", currentMonthHistory)
+    
+    const annualLeaveDetails = req.user.annualLeave.details;
+    const annualLeaveTimeDetails = annualLeaveDetails.map(detail => detail.timeDetails).flat(Infinity);
+    const currentMonthAnualLeaveTimeDetails = annualLeaveTimeDetails.filter(obj => obj.date.split('/')[1] === currentMonth)
+    console.log("🚀 ~ file: employeeControllers.js ~ line 324 ~ DiemDanh.findOne ~ currentMonthAnualLeaveTimeDetails", currentMonthAnualLeaveTimeDetails)
+   
+    
+
+    const dateList = diemDanhOfUser.history.map(his => his.date);
+    const uniqueDateList = dateList.filter((date, index) => dateList.indexOf(date) == index);
+    const currentMonthDateList = uniqueDateList.filter(date => date.split('/')[1] === currentMonth)
+    console.log("🚀 ~ file: employeeControllers.js ~ line 331 ~ DiemDanh.findOne ~ currentMonthDateList", currentMonthDateList)
+    
+
+    res.render('thongTinGioLam.ejs',{
+      pageTitle: 'Thông tin giờ làm',
+      path: '/thongtingiolam',
+      user: req.user,
+      history: currentMonthHistory,
+      totalWorkingHours: new Date(currentMonthTotalWorkingHour).toISOString().slice(11, 19) ,
+      dateList: currentMonthDateList,
+      annualLeave: currentMonthAnualLeaveTimeDetails,
+      currentMonth: currentMonth
     })
   })  
   .catch((err) => {console.log(err)});
 }
 
+exports.getCovidProfile = (req, res, next) => {
+  res.render("covidProfile.ejs", {
+    pageTitle: "Thông tin Covid",
+    path: "/covidcanhan",
+    name: req.user.name,
+    working: req.user.working,
+  });
+}
 
-exports.postThongTinGioLam = (req, res, next) => {
+exports.postCovidProfile = (req, res, next) => {
+  const covidProfile = {
+    temperature: req.body.temperature,
+    firstTimeType: req.body.firstTimeType,
+    firstTimeDate: req.body.firstTimeDate,
+    secondTimeType: req.body.secondTimeType,
+    secondTimeDate: req.body.secondTimeDate,
+    status: req.body.status
+  }
 
+  req.user.covidProfile = covidProfile;
+  req.user.save();
+  res.render("covidProfile-kp.ejs", {
+    pageTitle: "Thông tin Covid",
+    path: "/covidcanhan",
+    name: req.user.name,
+    working: req.user.working,
+    temperature: req.body.temperature,
+    firstTimeType: req.body.firstTimeType,
+    firstTimeDate: req.body.firstTimeDate,
+    secondTimeType: req.body.secondTimeType,
+    secondTimeDate: req.body.secondTimeDate,
+    status: req.body.status
+  });
 }

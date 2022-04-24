@@ -31,7 +31,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // set routes for app
 
 app.use((req, res, next) => {
-  User.findById('62640aa2339d9779678250da')
+  User.findById('626591ed2d93d9bdcd06d71b')
     .then((user) => {
       req.user = user;
       next();
@@ -65,6 +65,7 @@ mongoose
             totalAnnualLeave: 5,
             details: []
           },
+          covideProfile: {},
           imageUrl:
             "https://icdn.dantri.com.vn/thumb_w/640/2019/12/20/diem-danh-12-hot-boy-noi-bat-nhat-1-nam-quadocx-1576851098388.jpeg",
           session: {
