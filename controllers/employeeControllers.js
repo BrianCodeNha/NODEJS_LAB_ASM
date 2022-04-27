@@ -286,9 +286,9 @@ exports.getThongTinGioLam = (req, res, next) => {
     const annualLeaveDetails = req.user.annualLeave.details;
     const annualLeaveTimeDetails = annualLeaveDetails.map(detail => detail.timeDetails).flat(Infinity);
     const currentMonthAnualLeaveTimeDetails = annualLeaveTimeDetails.filter(obj => obj.date.split('/')[1] === currentMonth)
+    console.log("🚀 ~ file: employeeControllers.js ~ line 289 ~ DiemDanh.findOne ~ currentMonthAnualLeaveTimeDetails", currentMonthAnualLeaveTimeDetails)
    
-    console.log("🚀 ~ file: employeeControllers.js ~ line 278 ~ DiemDanh.findOne ~ annualLeaveTimeDetails", annualLeaveTimeDetails)
-
+    
     const dateList = diemDanhOfUser.history.map(his => his.date);
     const uniqueDateList = dateList.filter((date, index) => dateList.indexOf(date) == index);
     const currentMonthDateList = uniqueDateList.filter(date => date.split('/')[1] === currentMonth)
@@ -351,6 +351,7 @@ exports.getCovidProfile = (req, res, next) => {
     path: "/covidcanhan",
     name: req.user.name,
     working: req.user.working,
+    user: req.user
   });
 }
 

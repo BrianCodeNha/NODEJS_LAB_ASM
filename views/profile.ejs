@@ -1,35 +1,41 @@
 <%- include('./includes/head.ejs') %>
-    <link rel="stylesheet" href="/css/product.css">
-    </head>
+<link rel="stylesheet" href="/css/product.css">
+</head>
 
-    <body>
-        <%- include('./includes/navigation.ejs') %>
+<body>
+  <%- include('./includes/navigation.ejs') %>
 
-            <main>
-                <h1>Thông tin nhân viên</h1>
-                <%- include('./includes/clock.ejs') %>                
-                <hr>
-                <div class="row container">
+  <main>
+    <h1>Thông tin nhân viên</h1>
+    <%- include('./includes/clock.ejs') %>
+    <hr>
+    <div class="row container">
+      <div class="col-12 col-md-6 col-lg-4">
+        <img style="padding: 10px;" class="img-fluid" src="<%= user.imageUrl %>" alt="profileImage">
+      </div>
+      <div class="col-12 col-md-6 col-lg-8">
+        <ul class="fa-ul">
+          <li><span class="fa-li"><i class="fa-solid fa-check-square"></i></span><strong>Id</strong>: <%= user.id %></li>
+          <li><span class="fa-li"><i class="fa-solid fa-check-square"></i></span><strong>Name</strong>: <%= user.name %></li>
+          <li><span class="fa-li"><i class="fa-solid fa-check-square"></i></span><strong>DoB</strong>: <%= user.doB %></li>
+          <li><span class="fa-li"><i class="fa-solid fa-check-square"></i></span><strong>SalaryScale</strong>: <%= user.salaryScale %></li>
+          <li><span class="fa-li"><i class="fa-solid fa-check-square"></i></span><strong>StartDate</strong>: <%= user.startDate %></li>
+          <li><span class="fa-li"><i class="fa-solid fa-check-square"></i></span><strong>Department</strong>: <%= user.department %></li>
+          <li><span class="fa-li"><i class="fa-solid fa-check-square"></i></span><strong>AnnualLeave</strong>: <%= user.annualLeave.totalAnnualLeave %></li>
+        </ul>
 
-                    <div class="col-4">
-                        <img style="padding: 10px;" class="img-fluid" src="<%= user.imageUrl %>" alt="profileImage">                        
-                    </div>
-                    <div class="col-8">
-                        <ul>
-                            <li>id: <%= user.id %></li>
-                            <li>name: <%= user.name %></li>
-                            <li>doB: <%= user.doB %></li>
-                            <li>salaryScale: <%= user.salaryScale %></li>
-                            <li>startDate: <%= user.startDate %></li>
-                            <li>department: <%= user.department %></li>
-                            <li>annualLeave: <%= user.annualLeave.totalAnnualLeave %></li>
-                        </ul>
-                        <form style="padding: 10px;" action="/profile" method="POST">
-                            <input type="text" name="imageUrl" value="<%= user.imageUrl %>" class="form-control">
-                            <button class="btn btn-primary">Change Profile Picture</button>
-                        </form>
-                    </div>
-                </div>
-            </main>
-            <%- include('./includes/end.ejs') %>
-            
+        <form action="/profile" method="POST">
+          <div class="p-1">
+            <input style: type="text" name="imageUrl" value="<%= user.imageUrl %>" class="form-control">
+          </div>
+          <div class="p-1">
+
+            <button class="btn">Change Profile Picture</button>
+          </div>
+        </form>
+
+
+      </div>
+    </div>
+  </main>
+  <%- include('./includes/end.ejs') %>

@@ -1,79 +1,115 @@
 <%- include('./includes/head.ejs') %>
-    <link rel="stylesheet" href="/css/product.css">
-    </head>
+<link rel="stylesheet" href="/css/product.css">
+</head>
 
-    <body>
-        <%- include('./includes/navigation.ejs') %>
+<body>
+  <%- include('./includes/navigation.ejs') %>
 
-            <main>
-                <% 
+  <main>
+    <% 
                 let totalOverTime = 0;
                 let annualLeaveTime = 0;
                 let minusWorkingHours = 0;
                 
                 %>
-                <h2>Thông tin giờ làm tháng <%= currentMonth %></h2>
-                <%- include('./includes/clock.ejs') %>               
-                <hr>                
-                <h4>Nhân Viên: <%= user.name %></h4>
-                <p>Tổng thời gian làm việc: <%= totalWorkingHours %></p>
-                <p>Danh sách các phiên làm việc được ghi nhận:</p>
-                <% if (dateList) { for (let date of dateList) { %>
+    <h1>Thông tin giờ làm tháng <%= currentMonth %></h1>
+    <%- include('./includes/clock.ejs') %>
+    <hr>
+    <h2>Nhân Viên: <%= user.name %></h2>
+    <hr>
+    <div class="row">
+      <div class="col">
+        <div class="p-3" style="background-color: rgb(234, 245, 245);">
+          <h3><strong>Tổng thời gian làm việc:</strong> <%= totalWorkingHours %></h3>
+          <p><strong>Danh sách các phiên làm việc được ghi nhận:</strong></p>
+          <% if (dateList) { for (let date of dateList) { %>
 
-                    <p>Ngày: <%= date %>  </p>                    
+          <p><strong>Ngày</strong>: <%= date %> </p>
 
-                    <% if (history) { 
-                        const his1 = history.filter(his => his.date.toString() === date.toString());
-                        const annualLeaveDetail1 = annualLeave.filter(annual => annual.date.toString() === date.toString())
-                        const totalAnnualLeaveHour1 =  annualLeaveDetail1.map(annualLeave => annualLeave.hours).reduce((prev, cur) => prev + cur,0)
-                        
-                        const workingTimeOfHis1 = his1.map(his => his.duration).reduce((prev, current) => prev + current,0)
-                        %>
-                        <p>
-                            Tổng số giờ làm trong ngày: <%= new Date(workingTimeOfHis1).toISOString().slice(11, 19) %> <br/>                        
-                            Số giờ overTime được tính: <% if (8*60*60*1000 > workingTimeOfHis1) { %> 0 <% } else {totalOverTime += (workingTimeOfHis1/(60*60*1000) - 8) %> <%= (workingTimeOfHis1/(60*60*1000) - 8).toFixed(1) %> <% } %><br/>
-                            AnnualLeave đã đăng ký: <%= totalAnnualLeaveHour1  %> <br/>
-                            Số giờ làm thiếu: <% if (8*60*60*1000 > workingTimeOfHis1) { minusWorkingHours += (8 - workingTimeOfHis1/(60*60*1000)) %> <%= (8 - workingTimeOfHis1/(60*60*1000)).toFixed(1) %> <% } else {totalOverTime += (workingTimeOfHis1/(60*60*1000) - 8) %> 0 <% } %> <br/>    
-                                                
-                        </p>
-                        <%
-                        for (let his of his1) { %>
-                        <p>
-                            Bắt đầu: <%= new Date(1*his.startTime).getHours() + ':' + new Date(1*his.startTime).getMinutes() + ':' + new Date(1*his.startTime).getSeconds() %> - Kết thúc: <%= new Date(1*his.endTime).getHours() + ':' + new Date(1*his.endTime).getMinutes() + ':' + new Date(1*his.endTime).getSeconds() %> # Nơi làm việc: <%= his.location %> # Thời gian làm việc: <%= new Date(his.duration).toISOString().slice(11, 19) %>                         
-                        </p>
-                        <% } %>
-                        
-                        <% } else { %>
-    
-                            <h3>Không có lịch sử làm việc</h3>
-                            <% } %>
+          <% if (history) { 
+              const his1 = history.filter(his => his.date.toString() === date.toString());
 
-                    <% }} else { %>
+              const annualLeaveDetail1 = annualLeave.filter(annual => annual.date.toString() === date.toString())
+                            
+              const totalAnnualLeaveHour1 =  annualLeaveDetail1.map(annualLeave => annualLeave.hours).reduce((prev, cur) => prev + cur,0)  
+              
+              annualLeaveTime += totalAnnualLeaveHour1
+              
+              const workingTimeOfHis1 = his1.map(his => his.duration).reduce((prev, current) => prev + current,0)
+              %>
+          <p>
+            <strong> Tổng số giờ làm trong ngày:</strong> <%= new Date(workingTimeOfHis1).toISOString().slice(11, 19) %> <br />
+            <strong> Số giờ overTime được tính:</strong> <% 
+            if (8 > ((workingTimeOfHis1/(60*60*1000)) + totalAnnualLeaveHour1)) {
+               %> 0 <% 
+              } else {
+                totalOverTime += ((workingTimeOfHis1/(60*60*1000) + totalAnnualLeaveHour1) - 8) %>
+            
+            <%= (workingTimeOfHis1/(60*60*1000) + totalAnnualLeaveHour1 - 8).toFixed(1) %>
 
-                        <h3>Chưa ghi nhận ngày làm việc nào!!!</h3>
+            <% } %><br />
 
-                        <% } %>               
-                                           
-           <hr>
-           <h2>Thông tin lương tháng <%= currentMonth %></h2>
-           <form action="/thongtingiolam" method="POST">
-               <select name="month" id="month">
-                   <option value="04">Tháng 4</option>
-                   <option value="03">Tháng 3</option>                   
-               </select>
-               <button type="submit">View</button>
-           </form>
-           <p>Lương tháng: <%= Math.ceil(user.salaryScale*3000000 + (totalOverTime - minusWorkingHours) * 200000).toLocaleString('vi-VN') %> VND</p>
-           <p>overTime: <%= totalOverTime.toFixed(1) %></p>
-           <p>annualLeave: <%= annualLeaveTime.toFixed(1) %></p>
-           <p>số giờ làm thiếu: <%= minusWorkingHours.toFixed(1) %></p>
+            <strong>AnnualLeave đã đăng ký:</strong> <%= totalAnnualLeaveHour1  %> <br />
+            <strong>Số giờ làm thiếu:</strong> <% 
+            if (8 > (workingTimeOfHis1/(60*60*1000) + totalAnnualLeaveHour1)) { 
 
+              minusWorkingHours += (8 - (workingTimeOfHis1/(60*60*1000) + totalAnnualLeaveHour1)) %>
 
-            </main>
-            <%- include('./includes/end.ejs') %>
+            <%= (8 - (workingTimeOfHis1/(60*60*1000) + totalAnnualLeaveHour1)).toFixed(1)  %>
 
+            <% } else { %>
+            0
+            <% } %> <br />
 
+          </p>
+          <%
+                            for (let his of his1) { %>
+          <p>
+            Bắt đầu: <%= new Date(1*his.startTime).getHours() + ':' + new Date(1*his.startTime).getMinutes() + ':' + new Date(1*his.startTime).getSeconds() %> - Kết thúc: <%= new Date(1*his.endTime).getHours() + ':' + new Date(1*his.endTime).getMinutes() + ':' + new Date(1*his.endTime).getSeconds() %> # Nơi làm việc: <%= his.location %> # Thời gian làm việc: <%= new Date(his.duration).toISOString().slice(11, 19) %>
+          </p>
+          <% } %>
+          <hr>
 
+          <% } else { %>
 
+          <h3>Không có lịch sử làm việc</h3>
+          <% } %>
 
+          <% }} else { %>
 
+          <h3>Chưa ghi nhận ngày làm việc nào!!!</h3>
+
+          <% } %>
+
+        </div>
+      </div>
+      <div class="col">
+
+        <div class="row container">
+          <div class="col-12 col-md-4 col-lg-4 p-3">
+            <img class="img-fluid" src="<%= user.imageUrl %>" alt="userImage">
+          </div>
+          <div class="col-12 col-md-8 col-lg-8 p-3">
+            <h3>Thông tin lương tháng <%= currentMonth %></h3>
+            <form action="/thongtingiolam" method="POST">
+              <div class="input-group mb-3 me-5">
+                <select class="form-select" name="month" id="month">
+                  <option value="">Chọn tháng</option>
+                  <option value="04">Tháng 4</option>
+                  <option value="03">Tháng 3</option>
+                </select>
+                <button class="btn" type="submit" id="button-addon2">View</button>
+              </div>
+
+            </form>
+            <p><strong>Lương tháng:</strong> <%= Math.ceil(user.salaryScale*3000000 + (totalOverTime - minusWorkingHours) * 200000).toLocaleString('vi-VN') %> VND</p>
+            <p><strong>OverTime:</strong> <%= totalOverTime.toFixed(1) %></p>
+            <p><strong>AnnualLeave:</strong> <%= annualLeaveTime.toFixed(1) %></p>
+            <p><strong>Số giờ làm thiếu:</strong> <%= minusWorkingHours.toFixed(1) %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+  <%- include('./includes/end.ejs') %>
