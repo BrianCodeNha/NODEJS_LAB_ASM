@@ -1,6 +1,5 @@
 const http = require("http");
 const path = require("path");
-const date = require("date-and-time");
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -8,85 +7,68 @@ const bodyParser = require("body-parser");
 const app = express();
 const mongoose = require("mongoose");
 
+const URI =
+  "mongodb+srv://BrianNguyen:097359@cluster0.c8rh7.mongodb.net/asm1?retryWrites=true&w=majority";
+const session = require("express-session");
+const MongoDBStore = require("connect-mongodb-session")(session); // use for store session in mongodb, can use firebase
+const store = new MongoDBStore({
+  uri: URI,
+  collection: "sessions",
+});
+
+csrf = require("csurf");
+
 // call model
 
 const User = require("./models/user");
 const today = new Date();
 
-
 // setup routes cho website
 
 const employeeRoutes = require("./routes/employeeRoutes");
+const authRoutes = require("./routes/auth");
 
 //set views for app
 
 app.set("view engine", "ejs");
 app.set("views", "views");
 
-// encoded body req and create static path to public folder
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use( // cài dat session --> có thể dùng req.session
+  session({
+    secret: "this is my first secret",
+    resave: false,
+    unIntialize: false,
+    store: store
+  })
+);
+app.use(bodyParser.urlencoded({ extended: true })); // encoded body req and create static path to public folder
 app.use(express.static(path.join(__dirname, "public")));
 
 // set routes for app
 
 app.use((req, res, next) => {
-  User.findById('626591ed2d93d9bdcd06d71b')
+  if(!req.session.user){
+    return next();
+  }
+  User.findById(req.session.user._id)
     .then((user) => {
       req.user = user;
       next();
-    })    
+    })
     .catch((error) => {
       console.error(error);
     });
 });
 
+app.use(authRoutes);
 app.use(employeeRoutes);
 
 const server = http.createServer(app);
 
 mongoose
-  .connect(
-    "mongodb+srv://BrianNguyen:097359@cluster0.c8rh7.mongodb.net/asm1?retryWrites=true&w=majority"
-  )
+  .connect(URI)
   .then(() => {
-    User.findOne().then((user) => {
-      if (!user) {
-        const datett = today.getFullYear() + '-' + today.getMonth() + '-' + today.getDate()
-        // khởi tạo user nếu chưa có
-        const user = new User({
-          working: false,
-          name: "Nguyễn Minh Chí",
-          doB: "01/01/2000",
-          salaryScale: 2,
-          startDate: "01/01/2022",
-          department: "IT",
-          annualLeave: {
-            totalAnnualLeave: 5,
-            details: []
-          },
-          covideProfile: {},
-          imageUrl:
-            "https://icdn.dantri.com.vn/thumb_w/640/2019/12/20/diem-danh-12-hot-boy-noi-bat-nhat-1-nam-quadocx-1576851098388.jpeg",
-          session: {
-            sessionDuration: 0,
-            history: {
-              date: '2022',
-              startTime: null,
-              endTime: null,
-              duration: 0,
-              location: null,
-            },
-          },
-        });
-        
-        user.save();
-      }
-      
-        
-      console.log("🚀 ~ file: app.js ~ line 41 ~ User.findOne ~ user", user);
-    });
-
     server.listen(3000);
   })
   .catch((err) => {

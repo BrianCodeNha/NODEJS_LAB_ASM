@@ -1,0 +1,24 @@
+<%- include('./includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css">
+    </head>
+
+    <body>
+        <%- include('./includes/navigation.ejs') %>
+
+            <main>
+                <h1>Manager</h1>
+                <h3>Tên: <%= user.name %></h3>
+                <%- include('./includes/clock.ejs') %>
+                <hr>
+                <%- include('./includes/diemDanh/controlbar.ejs') %>
+                <hr>
+                <h3>Danh sách nhân viên quản lý</h3>
+                <ol>
+                    <% for (let staff of staffs) { %>
+                        <li>
+                            <a href="manager/<%= staff._id %>"><%= staff.name %></a>
+                        </li>
+                        <% } %>
+                    </ol>
+            </main>
+            <%- include('./includes/end.ejs') %>

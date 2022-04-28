@@ -37,4 +37,10 @@ const diemDanhSchema = new Schema({
     }]
 })
 
+diemDanhSchema.methods.deleteHistory = function(hisId) {
+    const updateHistory = this.history.filter(obj => obj._id.toString() !== hisId);
+    this.history = updateHistory;
+    return this.save();
+}
+
 module.exports = mongoose.model('DiemDanh', diemDanhSchema)

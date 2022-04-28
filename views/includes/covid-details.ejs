@@ -1,10 +1,25 @@
 <form action="/covidcanhan" method="POST">
   <h3>Tên Nhân Viên: <%= name %></h3>
+  <% if(hasCovidDetails){ %>
+    <ul>       
+      <li><strong>Thân nhiệt:</strong> <%= user.covidProfile.temperature  %> độ C</li>
+      <li><strong>vaccine Lần tiêm đầu:</strong> <%= user.covidProfile.firstTimeType %> </li>
+      <li><strong>Thời gian Lần tiêm đầu:</strong> <%= user.covidProfile.firstTimeDate %> </li>
+      <li><strong>Vacien Lần tiêm sau:</strong> <%= user.covidProfile.secondTimeType %> </li>
+      <li><strong>Thời gian Lần tiêm sau:</strong> <%= user.covidProfile.secondTimeDate %> </li>
+      <li><strong>Tình trạng sức khoẻ:</strong> <%= user.covidProfile.status %> </li>        
+  </ul>
+  <% if(user.title == 'manager') { %>
+  <a href="/topdf">Xuất file pdf</a>
+  <% } %>
+  <%  } else { %>
   <p>
+  <strong>CHƯA CÓ THÔNG TIN:</strong> vui lòng đăng ký theo hướng dẫn sau:
     - Đăng ký thông tin thân nhiệt (kèm ngày, giờ đăng ký). <br />
     - Đăng ký thông tin tiêm vaccine (mũi 1 loại gì ngày nào, mũi 2 loại gì ngày nào).<br />
     - Đăng ký thông tin dương tính với covid.<br />
   </p>
+  <% } %>
   <hr />
   <div style="background-color: rgb(240, 234, 226);" class="row p-3">
     <div class="col-12 col-md-4 col-lg-4">
@@ -39,5 +54,24 @@
         </div>
       </div>
     </form>
+    <hr>
+    <% if(user.title == 'manager') { %>
+      <h4>Thông Tin Covid Nhân Viên Quản Lý</h4>     
+        <% staffs.map(staff => { %>       
+          <p>
+            Tên: <%= staff.name %> <br>            
+          </p>
+          
+          <ul>       
+            <li><strong>Thân nhiệt:</strong> <%= staff.covidProfile.temperature  %> độ C</li>
+            <li><strong>vaccine Lần tiêm đầu:</strong> <%= staff.covidProfile.firstTimeType %> </li>
+            <li><strong>Thời gian Lần tiêm đầu:</strong> <%= staff.covidProfile.firstTimeDate %> </li>
+            <li><strong>Vacien Lần tiêm sau:</strong> <%= staff.covidProfile.secondTimeType %> </li>
+            <li><strong>Thời gian Lần tiêm sau:</strong> <%= staff.covidProfile.secondTimeDate %> </li>
+            <li><strong>Tình trạng sức khoẻ:</strong> <%= staff.covidProfile.status %> </li>        
+        </ul>
+        <hr>
+    <% }) }%>    
+    
   </div>
 </form>

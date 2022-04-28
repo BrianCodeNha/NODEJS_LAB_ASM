@@ -1,0 +1,109 @@
+<%- include('./includes/head.ejs') %>
+<link rel="stylesheet" href="/css/product.css">
+</head>
+
+<body>
+  <%- include('./includes/navigation.ejs') %>
+
+  <main>
+    <h1>Thông tin giờ làm việc</h1>
+    <%- include('./includes/clock.ejs') %>
+    <hr>
+    <h2>Nhân Viên: <%= staff.name %></h2>
+    <hr>
+    <section class="pagination d-flex justify-content-center">
+      <form action="/manager/<%= staff._id %>" method="POST">
+        <div class="input-group">
+          <select style="max-width: 7rem" class="form-select" name="month" id="month">
+            <option>Chọn Tháng</option>
+            <option>03</option>
+            <option>04</option>
+          </select>
+          <input hidden type="text" name="staffId" value="<%= staff._id %>">
+          <button class="btn" type="submit" id="button-addon2">Select</button>
+        </div>
+      </form>
+    </section>
+
+    <div class="col">
+      <div class="p-3" style="background-color: rgb(234, 245, 245);">
+        <h3><strong>Tổng thời gian làm việc:</strong> <%= totalWorkingHours %></h3>
+        <p><strong>Danh sách các phiên làm việc được ghi nhận:</strong></p>
+        <% if (dateList) { for (let date of dateList) { %>
+
+        <% if (history) { 
+              const his1 = history.filter(his => his.date.toString() === date.toString());              
+
+              const annualLeaveDetail1 = annualLeave.filter(annual => annual.date.toString() === date.toString())
+                                          
+              const totalAnnualLeaveHour1 =  annualLeaveDetail1.map(annualLeave => annualLeave.hours).reduce((prev, cur) => prev + cur,0)  
+                                         
+              const workingTimeOfHis1 = his1.map(his => his.duration).reduce((prev, current) => prev + current,0)
+               %>
+
+        <%
+          for (let his of his1) { %>
+        <ul>
+          <li>
+            * Ngày: <%= his.date %> - Bắt đầu: <%= new Date(1*his.startTime).getHours() + ':' + new Date(1*his.startTime).getMinutes() + ':' + new Date(1*his.startTime).getSeconds() %>
+            - Kết thúc: <%= new Date(1*his.endTime).getHours() + ':' + new Date(1*his.endTime).getMinutes() + ':' + new Date(1*his.endTime).getSeconds() %>
+            # Nơi làm việc: <%= his.location %> # Thời gian làm việc: <%= new Date(his.duration).toISOString().slice(11, 19) %>
+          
+          <form action="/delete" method="POST">
+            <input type="hidden" name="hisId" value="<%= his._id %>" >
+            <input type="hidden" name="userId" value="<%= staff._id %>" >
+            <button class="btn" type="submit">delete</button>   
+          </form> 
+        </li>
+        </ul>    
+        <% } if(his1) {%>
+
+        <p>
+          <strong> Số giờ làm trong ngày:</strong> <%= new Date(workingTimeOfHis1).toISOString().slice(11, 19) %>, <strong> Số giờ overTime được tính:</strong> <% 
+            if (8 > ((workingTimeOfHis1/(60*60*1000)) + totalAnnualLeaveHour1)) {
+               %> 0 <% 
+              } else {
+                 %>
+
+          <%= (workingTimeOfHis1/(60*60*1000) + totalAnnualLeaveHour1 - 8).toFixed(1) %>
+
+          <% } %><br />
+
+          <strong>AnnualLeave đã đăng ký:</strong> <%= totalAnnualLeaveHour1  %>, <strong>Số giờ làm thiếu:</strong> <% 
+            if (8 > (workingTimeOfHis1/(60*60*1000) + totalAnnualLeaveHour1)) { 
+
+               %>
+
+          <%= (8 - (workingTimeOfHis1/(60*60*1000) + totalAnnualLeaveHour1)).toFixed(1)  %>
+
+          <% } else { %>
+          0
+          <% } %> <br />
+
+        </p>
+        <% } %>
+        <hr>
+
+        <% } else { %>
+
+        <h3>Không có lịch sử làm việc</h3>
+        <% } %>
+
+        <% }} else { %>
+
+        <h3>Chưa ghi nhận ngày làm việc nào!!!</h3>
+
+        <% } %>
+
+      </div>
+      <div class="d-flex justify-content-center mt-3">
+        <form action="/manager/<%= staff._id %>" method="POST">
+
+          <button class="btn " type="submit">Xác nhận</button>
+        </form>
+
+      </div>
+    </div>
+
+  </main>
+  <%- include('./includes/end.ejs') %>

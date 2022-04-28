@@ -1,30 +1,31 @@
 const path = require('path');
 const employeeControllers = require('../controllers/employeeControllers')
+const isAuthen = require('../middleware/is-authen')
 
 const express = require('express');
 
 const router = express.Router();
 
-router.get('/',employeeControllers.getControlView)
+router.get('/', isAuthen, employeeControllers.getControlView)
 
-router.get('/diemdanh',employeeControllers.getDiemDanhDetails)
-router.post('/diemdanh',employeeControllers.postDiemDanhDetails)
+router.get('/diemdanh', isAuthen, employeeControllers.getDiemDanhDetails)
+router.post('/diemdanh', isAuthen, employeeControllers.postDiemDanhDetails)
 
-router.get('/kethuc',employeeControllers.getKetThuc)
+router.get('/kethuc', isAuthen, employeeControllers.getKetThuc)
 
-router.get('/nghiphep',employeeControllers.getNghiPhep)
-router.post('/nghiphep',employeeControllers.postNghiPhep)
-router.post('/dangkyngaynghi',employeeControllers.postDangKyNghiPhep)
-router.get('/ResetRegisterData',employeeControllers.getResetRegisterData)
+router.get('/nghiphep', isAuthen, employeeControllers.getNghiPhep)
+router.post('/nghiphep', isAuthen, employeeControllers.postNghiPhep)
+router.post('/dangkyngaynghi', isAuthen, employeeControllers.postDangKyNghiPhep)
+router.get('/ResetRegisterData', isAuthen, employeeControllers.getResetRegisterData)
 
-router.get('/profile',employeeControllers.getProfile)
-router.post('/profile',employeeControllers.postProfile)
+router.get('/profile', isAuthen, employeeControllers.getProfile)
+router.post('/profile', isAuthen, employeeControllers.postProfile)
 
-router.get('/thongtingiolam',employeeControllers.getThongTinGioLam)
-router.post('/thongtingiolam',employeeControllers.postThongTinGioLam)
+router.get('/thongtingiolam', isAuthen, employeeControllers.getThongTinGioLam)
+router.post('/thongtingiolam', isAuthen, employeeControllers.postThongTinGioLam)
 
-router.get('/covidcanhan',employeeControllers.getCovidProfile)
-router.post('/covidcanhan',employeeControllers.postCovidProfile)
+router.get('/covidcanhan', isAuthen, employeeControllers.getCovidProfile)
+router.post('/covidcanhan', isAuthen, employeeControllers.postCovidProfile)
 
 
 module.exports = router;
