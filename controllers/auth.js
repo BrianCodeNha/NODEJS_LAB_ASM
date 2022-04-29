@@ -82,6 +82,8 @@ exports.getManagerStaff = (req, res, next) => {
           .slice(11, 19),
         dateList: uniqueDateList,
         annualLeave: annualLeaveTimeDetails,
+        onConfirm: false,
+        confirmMess: req.body.ConfirmMess
       });
     });
   });
@@ -90,13 +92,26 @@ exports.getManagerStaff = (req, res, next) => {
 
 exports.postManagerStaff = (req, res, next) => {
 
+  const confirmMonth = req.body.confirmMonth;
+  let onDelete = true;
+
   const staffId = req.body.staffId;
   console.log("🚀 ~ file: auth.js ~ line 94 ~ staffId", staffId)
   const currentMonth = req.body.month;
   
   User.findById(staffId).then((user) => {
-    console.log("🚀 ~ file: auth.js ~ line 98 ~ User.findById ~ user", user)
-    DiemDanh.findOne({ userId: user._id }).then((diemDanhOfUser) => {
+
+    // save confirmMonths vao database
+    if(confirmMonth){
+      user.confirmMonths.push(confirmMonth);
+      user.save();
+      onDelete = false;
+    }
+    
+    // load thong tin gio lam cua staff
+
+    DiemDanh.findOne({ userId: user._id }).then((diemDanhOfUser) => {    
+
       const history = diemDanhOfUser.history;
       const currentMonthHistory = history.filter(his => his.date.split('/')[1] === currentMonth)
 
@@ -122,12 +137,15 @@ exports.postManagerStaff = (req, res, next) => {
         user: req.user,
         staff: user,
         isAuthenticated: req.session.isLoggedIn,
-        history: currentMonthHistory,
+        history: currentMonth === 'all' ? history : currentMonthHistory,
         totalWorkingHours: new Date(totalWorkingHour)
           .toISOString()
           .slice(11, 19),
-        dateList: currentMonthDateList,
-        annualLeave: currentMonthAnnualTimeDetails,
+        dateList: currentMonth === 'all' ? uniqueDateList : currentMonthDateList,
+        annualLeave: currentMonth === 'all' ? annualLeaveTimeDetails : currentMonthAnnualTimeDetails,
+        onConfirm: true,        
+        confirmMonth: currentMonth,
+        confirmMess: req.body.ConfirmMess
       });
     });
   });
@@ -200,7 +218,7 @@ exports.postLogin = (req, res, next) => {
             isAuthenticated: req.session.isLoggedIn,
             errorMessage: errorMessage,
             infoMessage: infoMessage,
-            user: req.user,
+            user: user,
           });
         }
 

@@ -10,12 +10,14 @@
     <%- include('./includes/clock.ejs') %>
     <hr>
     <h2>Nhân Viên: <%= staff.name %></h2>
+    <div class="text-success"><%= confirmMess %></div>
     <hr>
     <section class="pagination d-flex justify-content-center">
       <form action="/manager/<%= staff._id %>" method="POST">
         <div class="input-group">
           <select style="max-width: 7rem" class="form-select" name="month" id="month">
             <option>Chọn Tháng</option>
+            <option value="all">Select all</option>
             <option>03</option>
             <option>04</option>
           </select>
@@ -48,14 +50,18 @@
             * Ngày: <%= his.date %> - Bắt đầu: <%= new Date(1*his.startTime).getHours() + ':' + new Date(1*his.startTime).getMinutes() + ':' + new Date(1*his.startTime).getSeconds() %>
             - Kết thúc: <%= new Date(1*his.endTime).getHours() + ':' + new Date(1*his.endTime).getMinutes() + ':' + new Date(1*his.endTime).getSeconds() %>
             # Nơi làm việc: <%= his.location %> # Thời gian làm việc: <%= new Date(his.duration).toISOString().slice(11, 19) %>
-          
-          <form action="/delete" method="POST">
-            <input type="hidden" name="hisId" value="<%= his._id %>" >
-            <input type="hidden" name="userId" value="<%= staff._id %>" >
-            <button class="btn" type="submit">delete</button>   
-          </form> 
-        </li>
-        </ul>    
+
+            <% if(staff.confirmMonths.indexOf(his.date.split('/')[1]) < 0) { %>
+            <form action="/delete" method="POST">
+              <input type="hidden" name="hisId" value="<%= his._id %>">
+              <input type="hidden" name="userId" value="<%= staff._id %>">
+              <button class="btn" type="submit">delete</button>
+            </form>
+            <% } else { %>
+              <div class="text-danger">Đã xác nhận thông tin giờ làm!</div>
+              <% } %>
+          </li>
+        </ul>
         <% } if(his1) {%>
 
         <p>
@@ -95,14 +101,19 @@
 
         <% } %>
 
+        
       </div>
+      <% if(onConfirm) { %>
       <div class="d-flex justify-content-center mt-3">
         <form action="/manager/<%= staff._id %>" method="POST">
-
+          <input hidden type="text" name="staffId" value="<%= staff._id %>">
+          <input hidden type="text" name="confirmMonth" value="<%= confirmMonth %>" >
+          <input hidden type="text" name="month" value="<%= confirmMonth %>" >
+          <input hidden type="text" name="ConfirmMess" value="Đã xác nhận thông tin giờ làm tháng <%= confirmMonth %>" >
           <button class="btn " type="submit">Xác nhận</button>
         </form>
-
       </div>
+      <% } %>
     </div>
 
   </main>

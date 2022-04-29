@@ -10,6 +10,7 @@
         </div>
         <div>
             <form action="/kethuc" method="GET">
+                <input type="text" hidden name="month" value="<%= new Date().getMonth() %>">
                 <button <% if(!working) { %> disabled <% } %> class="btn">Kết thúc làm việc</button>
             </form>
         </div>

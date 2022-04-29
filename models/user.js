@@ -91,6 +91,7 @@ const userSchema = new Schema({
       type: String,
     },
   },
+  confirmMonths: [],
   session: {
     history: {
       date: {

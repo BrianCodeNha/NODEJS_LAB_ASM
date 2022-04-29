@@ -1,6 +1,7 @@
 <form action="/diemdanh" method="POST">
   <h3>Tên Nhân Viên: <%= name %></h3>
   <hr />
+  <div class="text-danger"><%= erroMess %></div>
   <div class="row container">
     <form action="/diemdanh" method="POST">
       <div class="col-4 centered">
@@ -12,6 +13,7 @@
           <option value="home">Nhà</option>
           <option value="customer">Khách Hàng</option>
         </select>
+        <input hidden type="text" name="month" value="<%= new Date().getMonth() %>">
       </div>
       <div class="col-4 centered">
         <button class="btn" type="submit">Submit</button>

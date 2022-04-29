@@ -16,11 +16,12 @@ exports.getControlView = (req, res, next) => {
 exports.getDiemDanhDetails = (req, res, next) => {
   res.render("diemDanh.ejs", {
     pageTitle: "Điểm Danh",
-    path: "/diemdanh",
+    path: "/",
     name: req.user.name,
     working: req.user.working,
     isAuthenticated: req.session.isLoggedIn,
     user: req.user,
+    erroMess: req.session.errorMess
   });
 };
 
@@ -38,6 +39,7 @@ exports.postDiemDanhDetails = (req, res, next) => {
     duration: null,
     location: req.body.location,
     isAuthenticated: req.session.isLoggedIn,
+    erroMess: req.session.errorMess
   };
   req.user.session.history = updatedHistory;
 
@@ -206,12 +208,16 @@ exports.getNghiPhep = (req, res, next) => {
       });
     });
 };
+
 exports.postNghiPhep = (req, res, next) => {
   // add data ngay nghi vao bo nho local de kiem tra
+  registeredList = req.user.annualLeave;
 
   const dateOfDetails = req.body.annualLeave.split("-");
   const correctDate =
     dateOfDetails[2] + "/" + dateOfDetails[1] + "/" + dateOfDetails[0];
+
+  const registeringMonth = dateOfDetails[1];
 
   const annualLeaveDetails = {
     // data tưng ngay nghi dc luu vao object
@@ -229,12 +235,10 @@ exports.postNghiPhep = (req, res, next) => {
   totalRegisteringDay += annualLeaveDetails.hours / 8.0;
 
   let error = ""; // bao loi tren browser
-
-  console.log(
-    "🚀 ~ file: employeeControllers.js ~ line 197 ~ totalAnnualLeave",
-    totalAnnualLeave
-  );
-  if (totalAnnualLeave === 0) {
+ 
+  if(req.user.confirmMonths.indexOf(registeringMonth) > -1){
+    error = 'Tháng này đã được quản lý của bạn xác nhận thông tin giờ làm. Bạn không thể đăng ký!'
+  } else if (totalAnnualLeave === 0) {
     error =
       "Số ngày nghỉ được phép đăng ký không còn! Bạn không thể đăng ký! Vui lòng liên hệ admin!";
   } else if (annualLeaveDetails.hours / 8.0 > totalAnnualLeave) {
