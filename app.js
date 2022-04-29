@@ -69,7 +69,9 @@ const server = http.createServer(app);
 mongoose
   .connect(URI)
   .then(() => {
-    server.listen(3000);
+    server.listen(process.env.PORT || 8080, '0.0.0.0', () => {
+      console.log('server is running')
+    });
   })
   .catch((err) => {
     console.error(err);
