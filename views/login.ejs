@@ -1,25 +1,33 @@
 <%- include('./includes/head.ejs') %>
-    <link rel="stylesheet" href="/css/forms.css">
-    <link rel="stylesheet" href="/css/auth.css">
+<link rel="stylesheet" href="/css/forms.css">
+<link rel="stylesheet" href="/css/auth.css">
 </head>
 
 <body>
   <%- include('./includes/navigation.ejs') %>
 
-    <main>
-      <div class="login-form">
-        <p class="text-danger"> <%= errorMessage %></p>
-        <p class="text-success"><%= infoMessage  %></p>
-        <form class="login-form" action="/login" method="POST">
-            <div class="form-control">                
-                <label for="email">E-Mail</label>
-                <input type="email" name="email" id="email">
-                <label for="password">Password</label>
-                <input type="password" name="password" id="password">                
-            </div>            
-            <button class="btn" type="submit">Login</button>
-        </form>
+  <main>
+    <div class="login-form">
+      <p class="text-danger"> <%= errorMessage %></p>
+      <p class="text-success"><%= infoMessage  %></p>
+      <form class="login-form" action="/login" method="POST">
+        <div class="form-control">
+          <label for="email">E-Mail</label>
+          <input type="email" name="email" id="email">
+          <label for="password">Password</label>
+          <input type="password" name="password" id="password">
+        </div>
+        <button class="btn" type="submit">Login</button>
+      </form>
 
-      </div>
-    </main>
-    <%- include('./includes/end.ejs') %>
+    </div>
+  </main>
+  <script>
+    if( '<%= infoMessage  %>' == 'Đăng nhập thành công!'){
+    var timeout = 2000;  
+    setTimeout(function () {
+       window.location = "http://localhost:3000";
+    }, timeout);
+    }
+  </script>
+  <%- include('./includes/end.ejs') %>

@@ -174,6 +174,9 @@ exports.getToPdf = (req, res, next) => {
 };
 
 exports.getLogin = (req, res, next) => {
+  req.session.prevUrl = req.get('referer');
+  
+  console.log("🚀 ~ file: auth.js ~ line 178 ~ req.session.prevUrl", req.session.prevUrl)
   res.render("login.ejs", {
     pageTitle: "Login",
     path: "/login",
@@ -182,6 +185,7 @@ exports.getLogin = (req, res, next) => {
     errorMessage: null,
     infoMessage: null,
     user: req.user,
+    prevUrl: null,
   });
 };
 
@@ -203,6 +207,7 @@ exports.postLogin = (req, res, next) => {
           errorMessage: errorMessage,
           infoMessage: infoMessage,
           user: req.user,
+          prevUrl: null,
         });
       }
       hashPassword.compare(password, user.password).then((isValid) => {
@@ -219,7 +224,9 @@ exports.postLogin = (req, res, next) => {
             errorMessage: errorMessage,
             infoMessage: infoMessage,
             user: user,
+            prevUrl: req.session ? req.session.prevUrl : null
           });
+          
         }
 
         // not correct password
@@ -232,8 +239,9 @@ exports.postLogin = (req, res, next) => {
           isAuthenticated: false,
           errorMessage: errorMessage,
           infoMessage: infoMessage,
+          prevUrl: null,
         });
-      });
+      });      
     })
     .catch((err) => console.log(err));
 };
