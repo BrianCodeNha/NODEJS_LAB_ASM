@@ -31,7 +31,7 @@ const authRoutes = require("./routes/auth");
 //set views for app
 
 app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, 'views'));
+app.set("views", "views");
 
 
 app.use( // cài dat session --> có thể dùng req.session

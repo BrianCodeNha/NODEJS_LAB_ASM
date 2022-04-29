@@ -4,7 +4,7 @@ const date = require("date-and-time");
 
 
 exports.getControlView = (req, res, next) => {
-  res.render("controlview.ejs", {
+  res.render("controlView.ejs", {
     pageTitle: "Điểm Danh",
     path: "/",
     working: req.user.working,
