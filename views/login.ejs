@@ -19,14 +19,18 @@
         </div>
         <button class="btn" type="submit">Login</button>
       </form>
-
+      <hr />
+      <div>manager</div>
+      <div>email: chi1@gmail.com - password: chi</div>
+      <div>employee</div>
+      <div>email: test@gmail.com - password: chi</div>
     </div>
   </main>
   <script>
     if( '<%= infoMessage  %>' == 'Đăng nhập thành công!'){
-    var timeout = 2000;  
+    var timeout = 1000;  
     setTimeout(function () {
-       window.location = "http://localhost:3000";
+       window.location = "/";
     }, timeout);
     }
   </script>
