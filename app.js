@@ -37,8 +37,8 @@ app.set("views", "views");
 app.use( // cài dat session --> có thể dùng req.session
   session({
     secret: "this is my first secret",
-    resave: false,
-    unIntialize: false,
+    resave: true,
+    unIntialize: true,
     store: store
   })
 );
