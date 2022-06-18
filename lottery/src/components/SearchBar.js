@@ -36,7 +36,7 @@ const mapStateToProps = (state) => ({
 
 export function SearchBar(props) {
   const [term, setTerm] = useState("");
-  const [option, setOption] = useState("producer");
+  const [option, setOption] = useState("producer"); 
 
   const history = useHistory();
 
@@ -46,7 +46,7 @@ export function SearchBar(props) {
     history.push(`/search?term=${term}&option=${option}`);
   };
   return (
-    <div>
+    <div className="d-flex justify-content-start">
       <form onSubmit={handleSubmit}>
         <label htmlFor="search">Tìm kiếm nhân viên</label>
         <div className="select">
@@ -69,8 +69,9 @@ export function SearchBar(props) {
             <option value="date">Ngày xổ số</option>
           </select>
         </div>
+        {}
       </form>
-      <div className="col-3">
+      <div className="my-3 mx-5">
         <AddEmployee 
         postStaff = {props.postStaff}
         staffList = {props.staffList}

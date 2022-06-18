@@ -1,1 +1,2 @@
-export const baseUrl = 'http://localhost:5000/user/'
+export const backEndURL = 'http://localhost:5000/'
+export const frontEndURL = 'http://localhost:3000/'

@@ -14,6 +14,7 @@ import {
   fetchSalary,
   postStaff,
   deleteEmployee,
+  deleteSelectedItem,
 } from "../Redux/ActionCreator";
 import Test from "./test";
 import QuanLyVeDo from "./QuanLyVeDo";
@@ -66,8 +67,11 @@ const mapDispatchToProp = (dispatch) => ({
       )
     );
   },
-  deleteEmployee: (id) => {
-    dispatch(deleteEmployee(id));
+  deleteEmployee: (id, number, producer) => {
+    dispatch(deleteEmployee(id, number, producer));
+  },
+  deleteSelectedItem: (idList) => {
+    dispatch(deleteSelectedItem(idList));
   },
 });
 
@@ -75,13 +79,9 @@ export function MainComponent({
   ticketListFromServer,
   isLoading,
   errMess,
-  departmentFromServer,
-  staffSalaryFromServer,
   fetchStaffs,
-  fetchSalary,
-  fetchDepartments,
-  postStaff,
   deleteEmployee,
+  deleteSelectedItem
 }) {
   //store stafflist here
   const [staffList, setStaffList] = useState([]);
@@ -176,6 +176,7 @@ export function MainComponent({
               onClick={(selectedID) => selectedEmployee(selectedID)}
               getSortEntry={(entry) => sortDataEntry(entry)}
               deleteEmployee={deleteEmployee}
+              deleteSelectedItem={deleteSelectedItem}
               isLoading={isLoading}
               errorMess={errMess}
             />

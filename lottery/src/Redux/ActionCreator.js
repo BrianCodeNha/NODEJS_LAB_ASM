@@ -1,5 +1,6 @@
 import * as ActionTypes from "./ActionTypes";
-import { baseUrl } from "../shared/baseUrl";
+import { frontEndURL , backEndURL } from "../shared/baseUrl";
+import axios from "axios";
 
 export const addNewEmployee = (newEmployee) => ({
   type: ActionTypes.ADD_NEW_EMPLOYEE,
@@ -8,42 +9,15 @@ export const addNewEmployee = (newEmployee) => ({
 
 // add staff to server
 
-export const postStaff =
-  (
-    id,
-    EmployeeName,
-    doB,
-    startDate,
-    departmentId,
-    salaryScale,
-    annualLeave,
-    overTime,
-    image
-  ) =>
-  (dispatch) => {
-    const newEmployee = {
-      id: id,
-      name: EmployeeName,
-      doB: doB,
-      startDate: startDate,
-      departmentId: departmentId,
-      salaryScale: salaryScale,
-      annualLeave: annualLeave,
-      overTime: overTime,
-      image: image
-    };
-
-    console.log(newEmployee);
-    return fetch(baseUrl + "staffs", {
-      method: "POST",
-      body: JSON.stringify(newEmployee),
-      headers: {"Content-Type": "application/json"},
-      credentials: "same-origin"
-  })
+export const postStaff = (newVeSo) =>
+(dispatch) => {    
+    console.log("🚀 ~ file: ActionCreator.js ~ line 13 ~ newVeSo", newVeSo)
+    
+    return axios.post(backEndURL + 'user/ticket', newVeSo)
       .then(
         (response) => {
-          console.log(response);
-          if (response.ok) {
+        console.log("🚀 ~ file: ActionCreator.js ~ line 19 ~ response", response.data)
+          if (response.statusText === "OK") {
             return response;
           } else {
             var err = new Error(
@@ -56,26 +30,23 @@ export const postStaff =
         (err) => {
           throw err;
         }
-      )
-      .then(response => response.json())
-      .then((data) => {dispatch(addStaff(data))})
+      )      
+      .then((response) => {dispatch(addStaff(response.data))})
       .catch((err) => {
-        console.log("post comments", err.message);
-        alert("postComments Error: " + err.message);
+        console.log("add ve so", err.message);
+        alert("loi them ve số Error: " + err.message);
       });
   };
 
 // DELETE employee
 
-export const deleteEmployee = (id) => (dispatch) => {
+export const deleteEmployee = (id, number, producer) => (dispatch) => {
   
-  return fetch(`http://localhost:5000/user/ticket/${id}`,{
-    method: 'DELETE'
-  })
+  return axios.delete(`http://localhost:5000/user/ticket/${id}`)
   .then(
     (response) => {
       console.log(response);
-      if (response.ok) {
+      if (response.statusText === "OK") {
         return response;
       } else {
         var err = new Error(
@@ -88,9 +59,38 @@ export const deleteEmployee = (id) => (dispatch) => {
     (err) => {
       throw err;
     }
-  )
-  .then(response => response.json())
-  .then(response => {alert(`successfully delete employeeId: ${id}`); dispatch(addStaff(response))})
+  )  
+  .then(response => {alert(`Đã xoá thành công vé số: ${number} - đài: ${producer}`); dispatch(addStaff(response.data))})
+  .catch((err) => {
+    console.log("delete", err.message);
+    alert("delete error: " + err.message);
+  });
+};
+
+
+export const deleteSelectedItem = (idList) => (dispatch) => {
+  
+  return axios.post(`http://localhost:5000/user/ticket/deletemany`, {
+    idList: idList,
+  })
+  .then(
+    (response) => {
+      console.log(response);
+      if (response.statusText === "OK") {
+        return response;
+      } else {
+        var err = new Error(
+          "Error " + response.status + ": " + response.statusText
+        );
+        err.response = response;
+        throw err;
+      }
+    },
+    (err) => {
+      throw err;
+    }
+  )  
+  .then(response => {alert(`Đã xoá thành công những vé số được chọn`); dispatch(addStaff(response.data))})
   .catch((err) => {
     console.log("delete", err.message);
     alert("delete error: " + err.message);
@@ -101,7 +101,7 @@ export const deleteEmployee = (id) => (dispatch) => {
 // EDIT EMPLOYEE
 
 export const updateEmployee = (id, employee) => (dispatch) => {
-  fetch(baseUrl + `staffs`,{
+  fetch(backEndURL + `staffs`,{
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(employee)
@@ -191,7 +191,7 @@ export const staffLoadingFailed = (errMess) => ({
 // fetch departments from the server
 
 export const fetchDepartments = () => (dispatch) => {
-  return fetch(baseUrl + "departments")
+  return fetch(backEndURL + "departments")
     .then((Response) => Response.json())
     .then((deparments) => dispatch(loadDepartments(deparments)));
 };
@@ -204,7 +204,7 @@ export const loadDepartments = (departments) => ({
 // fetch staff salary
 
 export const fetchSalary = () => (dispatch) => {
-  return fetch(baseUrl + "staffsSalary")
+  return fetch(backEndURL + "staffsSalary")
     .then((response) => response.json())
     .then((staffSalary) => dispatch(loadStaffSalary(staffSalary)));
 };
